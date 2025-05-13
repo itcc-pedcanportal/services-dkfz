@@ -1,6 +1,6 @@
 # ITCC PedCanPortal Data Upload Guide
 
-This repository contains documentation for bioinformaticians on how to upload data to the ITCC PedCanPortal hosted at DKFZ Heidelberg.
+This repository contains documentation for ITCC members on how to upload data to the ITCC PedCanPortal hosted at DKFZ Heidelberg.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -13,11 +13,11 @@ This repository contains documentation for bioinformaticians on how to upload da
 
 ## Overview
 
-The ITCC PedCanPortal (https://www.pedcanportal.eu/) allows institutes around the world to share sensitive genetic data of bioinformatics pipelines within the consortium and present the data in non-public web interfaces. This guide will help you connect to our OpenStack hosted VMs at DKFZ Heidelberg for data upload.
+This guide will help you connect to our OpenStack hosted VMs at DKFZ Heidelberg for data upload and service access.
 
 ## Step 1: Create a Life Science Account
 
-Before you can access our services, you need to create a Life Science ID:
+Before you can access our services, you need to create a Life Science ID if you don't already have one:
 
 1. Visit the [Life Science Login registration page](https://lifescience-ri.eu/ls-login/version-2023/user/how-to-get-ls-id.html)
 2. Follow these steps to create your account:
@@ -41,7 +41,7 @@ After obtaining your Life Science ID, you need to register for the de.NBI Cloud 
 
 The de.NBI Cloud Portal provides access to bioinformatics computing resources across Germany.
 
-## Step 3: Apply for Access to ITCCprod Services
+## Step 3: Apply for Access to de.NBI cloud Services hosted via OpenStack at the DKFZ
 
 Once registered with the de.NBI Cloud Portal, you can apply for access to our specific services:
 
@@ -60,14 +60,14 @@ After receiving confirmation of access:
 
 1. Connect to the VM using SSH:
    ```
-   ssh username@vm-hostname
+   ssh username@10.133.255.58
    ```
 
-2. Upload your data to the appropriate subdirectory in `/mnt/nfs-share/upload`
+2. Upload your data to the appropriate subdirectory in `/mnt/uploads/username/`
    - You can use tools like `scp`, `rsync`, or `sftp` for data transfer
    - Example using scp:
      ```
-     scp -r /path/to/your/data username@vm-hostname:/mnt/nfs-share/upload/your-subdirectory
+     scp -r /path/to/your/data username@vm-hostname:/mnt/uploads/username/your-subdirectory
      ```
 
 For more detailed information about connecting to DKFZ compute resources, please refer to the [de.NBI Heidelberg-DKFZ documentation](https://github.com/deNBI/cloud-user-docs/blob/main/wiki/Compute_Center/Heidelberg-DKFZ.md).
@@ -84,3 +84,4 @@ Email: julius.mueller@dkfz-heidelberg.de
 ## Additional Documentation
 
 - [Proxy Access Guide](docs/proxy-access-guide.md) - Instructions for accessing ITCC PedCanPortal services using proxy connections
+- [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md) - Instructions for generating unified ITCC sample IDs using the Mainzelliste service

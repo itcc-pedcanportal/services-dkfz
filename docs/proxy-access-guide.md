@@ -53,46 +53,6 @@ After establishing the connection, you can access the service by opening a brows
 http://localhost:8080
 ```
 
-## Accessing Web Services
-
-The ITCC PedCanPortal provides several web services that can be accessed via proxy:
-
-### Jupyter Notebooks
-
-To access Jupyter Notebook servers:
-
-```bash
-ssh -L 8888:jupyter-server.internal:8888 username@vm-hostname
-```
-
-Then open your browser and navigate to:
-```
-http://localhost:8888
-```
-
-### Database Interfaces
-
-For accessing database interfaces:
-
-```bash
-ssh -L 5432:db-server.internal:5432 username@vm-hostname
-```
-
-You can then connect your database client to `localhost:5432`.
-
-### Web Applications
-
-For web applications and dashboards:
-
-```bash
-ssh -L 3000:dashboard-server.internal:3000 username@vm-hostname
-```
-
-Access the dashboard at:
-```
-http://localhost:3000
-```
-
 ## Troubleshooting
 
 ### Common Issues
