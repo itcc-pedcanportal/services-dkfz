@@ -81,7 +81,7 @@ Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 5. Download the resulting mapped IDs file, which will contain both your original IDs and the corresponding ITCC pseudonyms
 
-[SCREENSHOT PLACEHOLDER: Screenshot of the Bulk Pseudonymization interface showing the file upload and pseudonymization process]
+![Screenshot of the Bulk Pseudonymization interface showing the file upload and pseudonymization process](resources/mainzelliste_bulkp.png)
 
 These generated ITCC pseudonyms should be used across all datasets when referring to these samples within the consortium.
 
