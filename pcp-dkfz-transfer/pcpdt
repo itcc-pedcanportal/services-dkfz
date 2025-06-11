@@ -255,14 +255,14 @@ def get_credentials(args):
         if ':' in token:
             return token.split(':', 1)
         else:
-            print("Error: Token must be in format 'username:password'")
+            print("Error: Token must be in format 'username:your-app-password'")
             sys.exit(1)
     else:
         # Interactive prompt
         print(f"PCP-DKFZ Transfer Tool v{VERSION}")
         print(f"Server: {NEXTCLOUD_URL}\n")
         username = input("Username: ")
-        password = getpass.getpass("Password: ")
+        password = getpass.getpass("Application Password: ")
         return username, password
 
 
@@ -331,7 +331,7 @@ Examples:
   %(prog)s share /Documents/report.pdf @researchers
 
 Environment:
-  NEXTCLOUD_TOKEN=username:password  (to avoid password prompts)
+  NEXTCLOUD_TOKEN=username:your-app-password  (to avoid password prompts)
 
 Shared Folders:
   /_shared/pedcanportal_all/      - All users (read/write)
@@ -342,7 +342,7 @@ Note: Public share links are restricted to admin users only.
     )
 
     parser.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
-    parser.add_argument('-t', '--token', help='Authentication token (username:password)')
+    parser.add_argument('-t', '--token', help='Authentication token (username:your-app-password)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
 
     subparsers = parser.add_subparsers(dest='command', help='Commands')
