@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 # Configuration
-NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.de"
+NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.eu"
 VERSION = "1.0.0"
 
 # Create SSL context that handles certificates properly

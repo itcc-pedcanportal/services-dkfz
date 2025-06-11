@@ -6,7 +6,7 @@
 export NEXTCLOUD_TOKEN="username:app-password"
 
 # Get app password from:
-# https://cbioportal-upload.pedcanportal.de/settings/user/security
+# https://cbioportal-upload.pedcanportal.eu/settings/user/security
 ```
 
 ## Basic Commands

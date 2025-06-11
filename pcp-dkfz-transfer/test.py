@@ -108,7 +108,7 @@ def main():
 
     if not token:
         print("\nNext steps:")
-        print("1. Get app password: https://cbioportal-upload.pedcanportal.de/settings/user/security")
+        print("1. Get app password: https://cbioportal-upload.pedcanportal.eu/settings/user/security")
         print("2. Set token: export NEXTCLOUD_TOKEN='username:app-password'")
         print("3. Try: ./pcpdt upload test.txt /")
     else:
