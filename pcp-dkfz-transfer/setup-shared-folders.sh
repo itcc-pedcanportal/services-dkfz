@@ -4,17 +4,28 @@
 
 echo "=== Setting up Nextcloud Shared Folders ==="
 
+# Check if running with proper permissions
+if [ "$EUID" -ne 0 ] && ! groups | grep -q docker; then
+    echo "Warning: You may need to run this with sudo or be in the docker group"
+fi
+
+# Get admin password if not set
+if [ -z "$ADMIN_PASSWORD" ]; then
+    read -s -p "Enter Nextcloud admin password: " ADMIN_PASSWORD
+    echo
+fi
+
 # Create shared folders if they don't exist
 echo "Creating shared folder structure..."
 docker exec nextcloud mkdir -p /mnt/uploads/_shared/pedcanportal_all
 docker exec nextcloud mkdir -p /mnt/uploads/_shared/cbioportal_uploaders
 
 # Set proper ownership
-docker exec nextcloud chown -R www-data:www-data /mnt/uploads/_shared
+# docker exec nextcloud chown -R www-data:www-data /mnt/uploads/_shared
 
 # Create admin entries for the folders (so they can be shared)
 echo "Creating admin folder entries..."
-docker exec -u www-data nextcloud php occ files:scan --path="/admin/files/_shared"
+docker exec nextcloud php occ files:scan --path="/admin/files/_shared"
 
 # Share folders with appropriate groups using OCS API
 echo "Setting up folder shares..."
