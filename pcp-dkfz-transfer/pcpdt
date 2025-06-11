@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 PCP-DKFZ Transfer Tool (pcpdt)
-Unified tool for uploading, downloading, and sharing files via Nextcloud
+Unified tool for uploading, downloading, and internal sharing via Nextcloud
 No external dependencies - uses only Python standard library
 """
 
@@ -16,15 +16,31 @@ import urllib.parse
 import urllib.error
 import ssl
 import mimetypes
+import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from pathlib import Path
 
 # Configuration
 NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.eu"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
+
+# Shared folders configuration
+SHARED_FOLDERS = {
+    'pedcanportal_all': {
+        'path': '/_shared/pedcanportal_all',
+        'description': 'Shared folder for all PedCanPortal users (read/write)',
+        'access': 'All authenticated users'
+    },
+    'cbioportal_uploaders': {
+        'path': '/_shared/cbioportal_uploaders',
+        'description': 'Shared folder for cBioPortal uploaders only (read/write)',
+        'access': 'Users with cbioportal_uploaders role'
+    }
+}
 
 # Create SSL context that handles certificates properly
 ssl_context = ssl.create_default_context()
+
 
 class NextcloudClient:
     """Unified Nextcloud client for all operations"""
@@ -99,7 +115,8 @@ class NextcloudClient:
     def download_file(self, remote_path, local_path):
         """Download a file"""
         if remote_path.startswith('http'):
-            # Public share URL
+            # Public share URL - but these are restricted to admins only
+            print("Warning: Public share links are restricted to admin users only.")
             url = remote_path
         else:
             # User file
@@ -129,7 +146,8 @@ class NextcloudClient:
 
                         if total_size > 0:
                             progress = int(50 * downloaded / total_size)
-                            sys.stdout.write(f"\r[{'=' * progress}{' ' * (50 - progress)}] {downloaded}/{total_size} bytes")
+                            sys.stdout.write(
+                                f"\r[{'=' * progress}{' ' * (50 - progress)}] {downloaded}/{total_size} bytes")
                             sys.stdout.flush()
 
                 if total_size > 0:
@@ -140,42 +158,93 @@ class NextcloudClient:
             print(f"Download error: {e}")
             return False
 
-    def create_share(self, path, password=None, expiry_days=None):
-        """Create a public share"""
+    def list_files(self, remote_path):
+        """List files in a directory"""
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        # WebDAV PROPFIND request
+        xml_request = '''<?xml version="1.0" encoding="UTF-8"?>
+        <d:propfind xmlns:d="DAV:">
+            <d:prop>
+                <d:displayname/>
+                <d:getcontentlength/>
+                <d:resourcetype/>
+                <d:getlastmodified/>
+            </d:prop>
+        </d:propfind>'''
+
+        headers = {
+            'Depth': '1',
+            'Content-Type': 'text/xml'
+        }
+
+        response, code, _ = self._make_request(url, method='PROPFIND', data=xml_request, headers=headers)
+
+        if code == 207:
+            # Parse XML response
+            try:
+                root = ET.fromstring(response)
+                files = []
+
+                for response_elem in root.findall('.//{DAV:}response'):
+                    href = response_elem.find('{DAV:}href').text
+                    displayname_elem = response_elem.find('.//{DAV:}displayname')
+                    resourcetype = response_elem.find('.//{DAV:}resourcetype')
+
+                    if displayname_elem is not None and displayname_elem.text:
+                        name = displayname_elem.text
+                        is_dir = resourcetype.find('{DAV:}collection') is not None
+                        files.append({
+                            'name': name,
+                            'path': href,
+                            'type': 'directory' if is_dir else 'file'
+                        })
+
+                return files[1:]  # Skip the directory itself
+            except:
+                return []
+        return []
+
+    def share_internal(self, path, group_or_user, permissions='read'):
+        """Create internal share with user or group"""
+        print("Note: This Nextcloud instance is configured for internal sharing only.")
+        print("Public share links are restricted to admin users.")
+        print(f"Sharing {path} with {group_or_user}...")
+
+        # Determine share type (0=user, 1=group)
+        share_type = 1 if group_or_user.startswith('@') else 0
+        share_with = group_or_user.lstrip('@')
+
+        # Map permissions
+        perm_map = {
+            'read': 1,
+            'write': 15,
+            'all': 31
+        }
+
+        params = {
+            'path': path,
+            'shareType': str(share_type),
+            'shareWith': share_with,
+            'permissions': str(perm_map.get(permissions, 1))
+        }
+
         headers = {
             'OCS-APIRequest': 'true',
             'Content-Type': 'application/x-www-form-urlencoded'
         }
 
-        # Build form data
-        params = {
-            'path': path,
-            'shareType': '3',  # Public link
-            'permissions': '1'  # Read only
-        }
-
-        if password:
-            params['password'] = password
-
-        if expiry_days:
-            expiry_date = datetime.now() + timedelta(days=expiry_days)
-            params['expireDate'] = expiry_date.strftime('%Y-%m-%d')
-
         data = urllib.parse.urlencode(params)
-
         url = f"{self.ocs_url}/shares?format=json"
+
         response, code, _ = self._make_request(url, method='POST', data=data, headers=headers)
 
         if code == 200:
             result = json.loads(response)
             if result['ocs']['meta']['status'] == 'ok':
-                share_data = result['ocs']['data']
-                return {
-                    'url': share_data['url'],
-                    'token': share_data['token'],
-                    'id': share_data['id']
-                }
-        return None
+                return True
+        return False
+
 
 def get_credentials(args):
     """Get credentials from environment or prompt"""
@@ -195,6 +264,7 @@ def get_credentials(args):
         username = input("Username: ")
         password = getpass.getpass("Password: ")
         return username, password
+
 
 def upload_recursive(client, local_path, remote_base, quiet=False):
     """Upload directory recursively"""
@@ -235,29 +305,39 @@ def upload_recursive(client, local_path, remote_base, quiet=False):
 
     return uploaded, failed
 
+
 def main():
     parser = argparse.ArgumentParser(
-        description='PCP-DKFZ Transfer Tool - Upload, download, and share files',
+        description='PCP-DKFZ Transfer Tool - Upload, download, and share files internally',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+        epilog=f"""
 Examples:
-  # Upload file
+  # Upload file to your personal space
   %(prog)s upload myfile.pdf /Documents/
 
-  # Upload folder
-  %(prog)s upload ./data /Projects/
+  # Upload to shared folder (all users can access)
+  %(prog)s upload results.csv /_shared/pedcanportal_all/
 
-  # Download file
+  # Upload to restricted folder (cbioportal_uploaders only)
+  %(prog)s upload data.tar.gz /_shared/cbioportal_uploaders/
+
+  # Download file  
   %(prog)s download /Documents/report.pdf ./
 
-  # Create share
-  %(prog)s share /Documents/report.pdf -p password -e 7
+  # List files in shared folder
+  %(prog)s list /_shared/pedcanportal_all/
 
-  # Download from share
-  %(prog)s download https://nextcloud.com/s/TOKEN ./report.pdf
+  # Share with internal group (no public links)
+  %(prog)s share /Documents/report.pdf @researchers
 
 Environment:
   NEXTCLOUD_TOKEN=username:password  (to avoid password prompts)
+
+Shared Folders:
+  /_shared/pedcanportal_all/      - All users (read/write)
+  /_shared/cbioportal_uploaders/  - cBioPortal uploaders only (read/write)
+
+Note: Public share links are restricted to admin users only.
         """
     )
 
@@ -274,15 +354,22 @@ Environment:
 
     # Download command
     download_parser = subparsers.add_parser('download', help='Download files')
-    download_parser.add_argument('source', help='Remote file path or share URL')
+    download_parser.add_argument('source', help='Remote file path')
     download_parser.add_argument('destination', nargs='?', default='.', help='Local destination')
-    download_parser.add_argument('-p', '--password', help='Password for protected share')
 
-    # Share command
-    share_parser = subparsers.add_parser('share', help='Create public share')
+    # List command
+    list_parser = subparsers.add_parser('list', help='List files in directory')
+    list_parser.add_argument('path', nargs='?', default='/', help='Remote directory path')
+
+    # Share command (internal only)
+    share_parser = subparsers.add_parser('share', help='Share internally with users or groups')
     share_parser.add_argument('path', help='File or folder to share')
-    share_parser.add_argument('-p', '--password', help='Set share password')
-    share_parser.add_argument('-e', '--expiry', type=int, help='Expiry in days')
+    share_parser.add_argument('target', help='Username or @groupname')
+    share_parser.add_argument('-p', '--permissions', choices=['read', 'write', 'all'],
+                              default='read', help='Share permissions')
+
+    # Info command
+    info_parser = subparsers.add_parser('info', help='Show information about shared folders')
 
     args = parser.parse_args()
 
@@ -290,25 +377,20 @@ Environment:
         parser.print_help()
         return
 
-    # Handle share downloads separately (no auth needed)
-    if args.command == 'download' and args.source.startswith('http'):
-        # Download from public share
-        print(f"Downloading from share: {args.source}")
-
-        # Extract token and build WebDAV URL if password is provided
-        if args.password:
-            token = args.source.split('/s/')[-1].split('/')[0]
-            client = NextcloudClient(token, args.password)
-            url = f"{NEXTCLOUD_URL}/public.php/webdav"
-        else:
-            client = NextcloudClient()
-            url = f"{args.source}/download"
-
-        if client.download_file(url, args.destination):
-            print(f"✓ Downloaded to {args.destination}")
-        else:
-            print("✗ Download failed")
-            sys.exit(1)
+    # Handle info command (no auth needed)
+    if args.command == 'info':
+        print(f"\nPCP-DKFZ Transfer Tool v{VERSION}")
+        print(f"Server: {NEXTCLOUD_URL}")
+        print("\nShared Folders:")
+        print("-" * 70)
+        for folder, info in SHARED_FOLDERS.items():
+            print(f"\n{folder}:")
+            print(f"  Path: {info['path']}")
+            print(f"  Description: {info['description']}")
+            print(f"  Access: {info['access']}")
+        print("\n" + "-" * 70)
+        print("\nNote: Public share links are restricted to admin users only.")
+        print("Use internal sharing with groups (@groupname) or specific users.\n")
         return
 
     # Get credentials for authenticated operations
@@ -322,6 +404,7 @@ Environment:
     if not client.test_connection():
         print("✗")
         print("Authentication failed! Check your credentials.")
+        print(f"Get an app password from: {NEXTCLOUD_URL}/settings/user/security")
         sys.exit(1)
     elif not args.quiet:
         print("✓")
@@ -333,6 +416,13 @@ Environment:
         if not source.exists():
             print(f"Error: Source not found: {args.source}")
             sys.exit(1)
+
+        # Check if uploading to shared folder
+        if args.destination.startswith('/_shared/'):
+            folder = args.destination.split('/')[2]
+            if folder in SHARED_FOLDERS:
+                print(f"Uploading to shared folder: {folder}")
+                print(f"Access: {SHARED_FOLDERS[folder]['access']}")
 
         if source.is_file():
             # Upload single file
@@ -369,33 +459,30 @@ Environment:
             print("✗ Download failed")
             sys.exit(1)
 
+    elif args.command == 'list':
+        # List files
+        print(f"Listing {args.path}:")
+        files = client.list_files(args.path)
+
+        if files:
+            print("-" * 50)
+            for file in files:
+                icon = "📁" if file['type'] == 'directory' else "📄"
+                print(f"{icon} {file['name']}")
+            print("-" * 50)
+            print(f"Total: {len(files)} items")
+        else:
+            print("Directory is empty or not accessible")
+
     elif args.command == 'share':
-        # Create share
-        print(f"Creating share for {args.path}...")
-        share = client.create_share(args.path, args.password, args.expiry)
-
-        if share:
-            print("\n✅ Share created successfully!\n")
-            print(f"📎 Share URL: {share['url']}")
-            if args.password:
-                print(f"🔒 Password: {args.password}")
-            if args.expiry:
-                print(f"📅 Expires: {args.expiry} days")
-
-            print("\n📥 Download commands:")
-            print("-" * 50)
-            if args.password:
-                print(f"# With password:")
-                print(f"pcpdt download {share['url']} -p {args.password}")
-            else:
-                print(f"# Direct download:")
-                print(f"wget '{share['url']}/download'")
-                print(f"# Or using pcpdt:")
-                print(f"pcpdt download {share['url']}")
-            print("-" * 50)
+        # Internal sharing only
+        if client.share_internal(args.path, args.target, args.permissions):
+            print(f"✓ Shared {args.path} with {args.target} ({args.permissions} access)")
         else:
             print("✗ Failed to create share")
+            print("Make sure the target user/group exists and you have permission to share this file")
             sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

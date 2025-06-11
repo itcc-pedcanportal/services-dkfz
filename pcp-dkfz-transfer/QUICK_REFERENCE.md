@@ -1,76 +1,72 @@
 # PCP-DKFZ Transfer Tool - Quick Reference
 
-## Setup (One Time)
+## Setup
 ```bash
-# Set credentials
+# One-time authentication setup
 export NEXTCLOUD_TOKEN="username:app-password"
-
-# Get app password from:
-# https://cbioportal-upload.pedcanportal.eu/settings/user/security
 ```
 
-## Basic Commands
+## Shared Folders
+- `/_shared/pedcanportal_all/` - All users (read/write)
+- `/_shared/cbioportal_uploaders/` - Restricted access (read/write)
+
+## Commands
+
+### Info
+```bash
+pcpdt info                          # Show shared folders info
+```
 
 ### Upload
 ```bash
-# Upload file
-pcpdt upload myfile.pdf /Documents/
-
-# Upload folder
-pcpdt upload ./data /Projects/
+pcpdt upload file.pdf /Documents/   # To personal space
+pcpdt upload file.csv /_shared/pedcanportal_all/   # To shared folder
+pcpdt upload ./folder /Projects/    # Upload entire folder
 ```
 
 ### Download
 ```bash
-# Download your file
-pcpdt download /Documents/report.pdf ./
-
-# Download from share
-pcpdt download https://nextcloud/s/ABC123 ./
-
-# Download password-protected share
-pcpdt download https://nextcloud/s/ABC123 ./ -p password
+pcpdt download /Documents/file.pdf ./
+pcpdt download /_shared/pedcanportal_all/data.csv ./
 ```
 
-### Share
+### List
 ```bash
-# Create simple share
-pcpdt share /Documents/file.pdf
-
-# With password & 7-day expiry
-pcpdt share /Projects/data.zip -p pass123 -e 7
+pcpdt list /                        # List root directory
+pcpdt list /_shared/pedcanportal_all/   # List shared folder
 ```
 
-## Common Workflows
-
-### Share with External User
+### Share (Internal Only)
 ```bash
-# 1. Upload and share
-pcpdt upload results.tar.gz /Shared/
-pcpdt share /Shared/results.tar.gz -p secret -e 14
-
-# 2. Send them:
-# URL: https://nextcloud/s/ABC123
-# Pass: secret
-# They download: wget "https://nextcloud/s/ABC123/download"
+pcpdt share /file.pdf username      # Share with user
+pcpdt share /file.pdf @groupname    # Share with group
+pcpdt share /folder @team -p write  # Share with write access
 ```
 
-### Automated Backup
+## Important Notes
+- ❌ **No public links** for regular users (admin only)
+- ✅ Use shared folders for collaboration
+- ✅ Internal sharing with users/groups allowed
+- 🔐 Always use app passwords
+
+## Examples
+
+### Team Collaboration
 ```bash
-#!/bin/bash
-DATE=$(date +%Y%m%d)
-tar -czf backup-$DATE.tar.gz /data/
-NEXTCLOUD_TOKEN="user:pass" pcpdt upload backup-$DATE.tar.gz /Backups/
-rm backup-$DATE.tar.gz
+# Upload to shared space
+pcpdt upload results.xlsx /_shared/pedcanportal_all/june-2024/
+
+# Others download
+pcpdt download /_shared/pedcanportal_all/june-2024/results.xlsx
 ```
 
-## Options
-- `-q` : Quiet mode (no progress)
-- `-t` : Specify token on command line
-- `-p` : Password (for shares)
-- `-e` : Expiry days (for shares)
+### Restricted Upload
+```bash
+# Only for cbioportal_uploaders role
+pcpdt upload patient-data.zip /_shared/cbioportal_uploaders/
+```
 
 ## Troubleshooting
-- **Auth failed**: Use app password, not regular password
-- **SSL error**: Update system certificates
-- **Not found**: Check file paths start with /
+- **Auth failed**: Check app password
+- **Access denied**: Check folder permissions/role
+- **No public links**: Use internal sharing instead

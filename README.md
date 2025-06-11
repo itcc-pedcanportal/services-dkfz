@@ -1,87 +1,218 @@
-# ITCC PedCanPortal Data Upload Guide
+# PCP-DKFZ Transfer Tool (pcpdt)
 
-This repository contains documentation for ITCC members on how to upload data to the ITCC PedCanPortal hosted at DKFZ Heidelberg.
+A simple, cross-platform command-line tool for uploading, downloading, and sharing files via the PedCanPortal Nextcloud instance.
 
-## Table of Contents
-- [Overview](#overview)
-- [Step 1: Create a Life Science Account](#step-1-create-a-life-science-account)
-- [Step 2: Register for de.NBI Cloud Portal](#step-2-register-for-denbi-cloud-portal)
-- [Step 3: Apply for Access to ITCCprod Services](#step-3-apply-for-access-to-itccprod-services)
-- [Step 4: SSH Connection and Data Upload](#step-4-ssh-connection-and-data-upload)
-- [Contact Information](#contact-information)
-- [Additional Documentation](#additional-documentation)
+## Features
 
-## Overview
+- **Upload** files and folders to your personal space or PedCanPortal internal shared folders
+- **Download** files from Nextcloud
+- **Access shared folders** for collaboration
+- **Internal sharing** with users and groups (no public links)
+- **Secure** - uses HTTPS and app passwords
+- **Cross-platform** - works on Windows, macOS, and Linux
 
-This guide will help you connect to our OpenStack hosted VMs at DKFZ Heidelberg for data upload and service access.
+## Shared Folders
 
-## Step 1: Create a Life Science Account
+This Nextcloud instance provides shared folders for collaboration:
 
-Before you can access our services, you need to create a Life Science ID if you don't already have one:
+- **`/_shared/pedcanportal_all/`** - Available to all authenticated users (read/write)
+- **`/_shared/cbioportal_uploaders/`** - Only for users with `cbioportal_uploaders` role (read/write)
 
-1. Visit the [Life Science Login registration page](https://lifescience-ri.eu/ls-login/version-2023/user/how-to-get-ls-id.html)
-2. Follow these steps to create your account:
-   - Click on "Register" on the Life Science Login page
-   - Fill in your personal information
-   - Verify your email address
-   - Complete your profile information
-   - Your Life Science ID will be created
+**Note:** Public share links are restricted to admin users only. All sharing is done internally.
 
-This account will serve as your identity for accessing various Life Science research infrastructure services.
+## Requirements
 
-## Step 2: Register for de.NBI Cloud Portal
+- Python 3.6 or higher (pre-installed on most modern systems)
+- Nextcloud account with app password
 
-After obtaining your Life Science ID, you need to register for the de.NBI Cloud Portal:
+## Installation
 
-1. Visit the [de.NBI Cloud Portal registration page](https://cloud.denbi.de/register)
-2. Log in using your Life Science ID credentials
-3. Complete the registration form with your information
-4. Accept the terms and conditions
-5. Submit your registration
+1. Clone the repository:
+```bash
+git clone https://github.com/itcc-pedcanportal/upload-dkfz.git
+cd upload-dkfz/pcp-dkfz-transfer
+```
 
-The de.NBI Cloud Portal provides access to bioinformatics computing resources across Germany.
+2. The script is already executable. If not:
+```bash
+chmod +x pcpdt
+```
 
-## Step 3: Apply for Access to de.NBI cloud Services hosted via OpenStack at the DKFZ
+3. Optionally, add to your PATH:
+```bash
+# Linux/macOS
+sudo cp pcpdt /usr/local/bin/
 
-Once registered with the de.NBI Cloud Portal, you can apply for access to our specific services:
+# Or add current directory to PATH
+echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
+source ~/.bashrc
+```
 
-1. Visit the [ITCCcloud_prod application page](https://signup.aai.lifescience-ri.eu/fed/registrar/?vo=denbi&group=ITCCcloud_prod)
-2. Log in with your Life Science ID
-3. Complete the application form, providing details about your research and data upload needs
-4. Submit your application
+## Authentication
 
-After submission, please wait for approval. The DKFZ team will review your application and:
-- Add your public SSH key to the relevant VM
-- Send confirmation from julius.mueller@dkfz-heidelberg.de when access is granted
+### Get App Password
 
-## Step 4: SSH Connection and Data Upload
+1. Log in to Nextcloud: https://cbioportal-upload.pedcanportal.eu
+2. Go to Settings → Security
+3. Create a new app password
+4. Use this password with your username
 
-After receiving confirmation of access:
+### Set Authentication
 
-1. Connect to the VM using SSH:
-   ```
-   ssh username@10.133.255.58
-   ```
+**Method 1: Environment Variable (Recommended)**
+```bash
+export NEXTCLOUD_TOKEN="your-username:your-app-password"
+```
 
-2. Upload your data to the appropriate subdirectory in `/mnt/uploads/username/`
-   - You can use tools like `scp`, `rsync`, or `sftp` for data transfer
-   - Example using scp:
-     ```
-     scp -r /path/to/your/data username@vm-hostname:/mnt/uploads/username/your-subdirectory
-     ```
+**Method 2: Interactive Prompt**
+Just run any command without setting the token.
 
-For more detailed information about connecting to DKFZ compute resources, please refer to the [de.NBI Heidelberg-DKFZ documentation](https://github.com/deNBI/cloud-user-docs/blob/main/wiki/Compute_Center/Heidelberg-DKFZ.md).
+## Usage
 
-## Contact Information
+### Show Shared Folders Information
+```bash
+pcpdt info
+```
 
-For any questions or issues regarding data upload or access to the ITCC PedCanPortal services, please contact:
+### Upload Files
 
-**Julius Müller**  
-Email: julius.mueller@dkfz-heidelberg.de
+Upload to your personal space:
+```bash
+pcpdt upload report.pdf /Documents/
+pcpdt upload data.csv /Projects/Analysis/
+```
 
----
+Upload to shared folders:
+```bash
+# Upload to shared folder (all users)
+pcpdt upload results.csv /_shared/pedcanportal_all/
 
-## Additional Documentation
+# Upload to restricted folder (cbioportal_uploaders only)
+pcpdt upload sensitive-data.tar.gz /_shared/cbioportal_uploaders/
+```
 
-- [Proxy Access Guide](docs/proxy-access-guide.md) - Instructions for accessing ITCC PedCanPortal services using proxy connections
-- [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md) - Instructions for generating unified ITCC sample IDs using the Mainzelliste service
+Upload entire folder:
+```bash
+pcpdt upload ./results /Projects/Experiment1/
+```
+
+### Download Files
+
+Download from your personal space:
+```bash
+pcpdt download /Documents/report.pdf ./
+pcpdt download /Projects/data.csv ~/Downloads/
+```
+
+Download from shared folders:
+```bash
+pcpdt download /_shared/pedcanportal_all/shared-data.csv ./
+```
+
+### List Files
+
+List files in a directory:
+```bash
+pcpdt list /Documents/
+pcpdt list /_shared/pedcanportal_all/
+```
+
+### Share with Other Users (Internal Only)
+
+Share with specific user:
+```bash
+pcpdt share /Documents/report.pdf colleague_username
+```
+
+Share with group (use @ prefix):
+```bash
+pcpdt share /Projects/results.csv @researchers -p write
+```
+
+Available permissions: `read`, `write`, `all`
+
+## Examples
+
+### Example 1: Collaborate via Shared Folder
+
+```bash
+# Upload data for all team members
+pcpdt upload analysis-results.xlsx /_shared/pedcanportal_all/2024-06-Results/
+
+# Team members can download
+pcpdt download /_shared/pedcanportal_all/2024-06-Results/analysis-results.xlsx ./
+```
+
+### Example 2: Restricted Data Upload
+
+```bash
+# Only users with cbioportal_uploaders role can access
+pcpdt upload patient-data.tar.gz /_shared/cbioportal_uploaders/cohort-A/
+
+# List files in restricted folder (only if you have access)
+pcpdt list /_shared/cbioportal_uploaders/
+```
+
+### Example 3: Automated Script
+
+```bash
+#!/bin/bash
+# Daily upload to shared folder
+
+DATE=$(date +%Y%m%d)
+REPORT="daily-report-$DATE.pdf"
+
+# Generate report
+generate_report.sh > "$REPORT"
+
+# Upload to shared folder
+NEXTCLOUD_TOKEN="user:app-password" pcpdt upload "$REPORT" /_shared/pedcanportal_all/reports/
+
+# Clean up
+rm "$REPORT"
+```
+
+## Important Notes
+
+1. **No Public Links**: Public share links are disabled for regular users. Only admins can create public links.
+
+2. **Internal Sharing Only**: Use the `share` command to share with other Nextcloud users or groups.
+
+3. **Shared Folder Access**: 
+   - Everyone can read/write to `/_shared/pedcanportal_all/`
+   - Only users with `cbioportal_uploaders` role can access `/_shared/cbioportal_uploaders/`
+
+4. **App Passwords**: Always use app passwords, never your main login password.
+
+## Troubleshooting
+
+### "Authentication failed"
+- Ensure you're using an app password, not your regular password
+- Check username is correct
+- Verify token format: `username:app-password`
+
+### "Permission denied" accessing shared folders
+- `/_shared/pedcanportal_all/` - Should work for all authenticated users
+- `/_shared/cbioportal_uploaders/` - Check if you have the `cbioportal_uploaders` role
+
+### Cannot create public share links
+- This is intentional - only admins can create public links
+- Use internal sharing: `pcpdt share file.txt @groupname`
+
+## Platform Notes
+
+### Windows
+```cmd
+python pcpdt upload C:\data\file.txt /Documents/
+```
+
+### macOS/Linux
+```bash
+./pcpdt upload ~/data/file.txt /Documents/
+```
+
+## Support
+
+- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/upload-dkfz)
+- Access problems: Contact your Nextcloud administrator
+- Server: https://cbioportal-upload.pedcanportal.eu
