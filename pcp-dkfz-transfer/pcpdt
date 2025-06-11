@@ -1,0 +1,401 @@
+#!/usr/bin/env python3
+"""
+PCP-DKFZ Transfer Tool (pcpdt)
+Unified tool for uploading, downloading, and sharing files via Nextcloud
+No external dependencies - uses only Python standard library
+"""
+
+import os
+import sys
+import json
+import base64
+import getpass
+import argparse
+import urllib.request
+import urllib.parse
+import urllib.error
+import ssl
+import mimetypes
+from datetime import datetime, timedelta
+from pathlib import Path
+
+# Configuration
+NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.de"
+VERSION = "1.0.0"
+
+# Create SSL context that handles certificates properly
+ssl_context = ssl.create_default_context()
+
+class NextcloudClient:
+    """Unified Nextcloud client for all operations"""
+
+    def __init__(self, username=None, password=None):
+        self.username = username
+        self.password = password
+        self.webdav_url = f"{NEXTCLOUD_URL}/remote.php/dav/files"
+        self.ocs_url = f"{NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1"
+        self.public_url = f"{NEXTCLOUD_URL}/public.php/webdav"
+
+    def _make_request(self, url, method='GET', data=None, headers=None):
+        """Make HTTP request with authentication"""
+        if headers is None:
+            headers = {}
+
+        # Setup request
+        if isinstance(data, str):
+            data = data.encode('utf-8')
+
+        req = urllib.request.Request(url, data=data, method=method)
+
+        # Add authentication
+        if self.username and self.password:
+            credentials = base64.b64encode(f"{self.username}:{self.password}".encode()).decode()
+            req.add_header('Authorization', f'Basic {credentials}')
+
+        # Add headers
+        for key, value in headers.items():
+            req.add_header(key, value)
+
+        try:
+            with urllib.request.urlopen(req, context=ssl_context) as response:
+                return response.read(), response.getcode(), response.headers
+        except urllib.error.HTTPError as e:
+            return e.read(), e.code, e.headers
+
+    def test_connection(self):
+        """Test if credentials are valid"""
+        url = f"{self.webdav_url}/{self.username}/"
+        _, code, _ = self._make_request(url, method='PROPFIND')
+        return code == 207
+
+    def upload_file(self, local_path, remote_path):
+        """Upload a single file"""
+        # Ensure remote path is properly formatted
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        if remote_path.endswith('/'):
+            remote_path = remote_path + os.path.basename(local_path)
+
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        # Read file
+        with open(local_path, 'rb') as f:
+            file_data = f.read()
+
+        # Determine content type
+        content_type, _ = mimetypes.guess_type(local_path)
+        headers = {'Content-Type': content_type} if content_type else {}
+
+        _, code, _ = self._make_request(url, method='PUT', data=file_data, headers=headers)
+        return code in [201, 204]
+
+    def create_directory(self, remote_path):
+        """Create a directory"""
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        _, code, _ = self._make_request(url, method='MKCOL')
+        return code in [201, 405]  # 405 means already exists
+
+    def download_file(self, remote_path, local_path):
+        """Download a file"""
+        if remote_path.startswith('http'):
+            # Public share URL
+            url = remote_path
+        else:
+            # User file
+            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        try:
+            req = urllib.request.Request(url)
+            if self.username and self.password:
+                credentials = base64.b64encode(f"{self.username}:{self.password}".encode()).decode()
+                req.add_header('Authorization', f'Basic {credentials}')
+
+            with urllib.request.urlopen(req, context=ssl_context) as response:
+                # Create directory if needed
+                os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+                # Download with progress
+                total_size = int(response.headers.get('Content-Length', 0))
+                downloaded = 0
+
+                with open(local_path, 'wb') as f:
+                    while True:
+                        chunk = response.read(8192)
+                        if not chunk:
+                            break
+                        f.write(chunk)
+                        downloaded += len(chunk)
+
+                        if total_size > 0:
+                            progress = int(50 * downloaded / total_size)
+                            sys.stdout.write(f"\r[{'=' * progress}{' ' * (50 - progress)}] {downloaded}/{total_size} bytes")
+                            sys.stdout.flush()
+
+                if total_size > 0:
+                    sys.stdout.write('\n')
+                return True
+
+        except Exception as e:
+            print(f"Download error: {e}")
+            return False
+
+    def create_share(self, path, password=None, expiry_days=None):
+        """Create a public share"""
+        headers = {
+            'OCS-APIRequest': 'true',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        # Build form data
+        params = {
+            'path': path,
+            'shareType': '3',  # Public link
+            'permissions': '1'  # Read only
+        }
+
+        if password:
+            params['password'] = password
+
+        if expiry_days:
+            expiry_date = datetime.now() + timedelta(days=expiry_days)
+            params['expireDate'] = expiry_date.strftime('%Y-%m-%d')
+
+        data = urllib.parse.urlencode(params)
+
+        url = f"{self.ocs_url}/shares?format=json"
+        response, code, _ = self._make_request(url, method='POST', data=data, headers=headers)
+
+        if code == 200:
+            result = json.loads(response)
+            if result['ocs']['meta']['status'] == 'ok':
+                share_data = result['ocs']['data']
+                return {
+                    'url': share_data['url'],
+                    'token': share_data['token'],
+                    'id': share_data['id']
+                }
+        return None
+
+def get_credentials(args):
+    """Get credentials from environment or prompt"""
+    # Check for token in args or environment
+    token = getattr(args, 'token', None) or os.environ.get('NEXTCLOUD_TOKEN')
+
+    if token:
+        if ':' in token:
+            return token.split(':', 1)
+        else:
+            print("Error: Token must be in format 'username:password'")
+            sys.exit(1)
+    else:
+        # Interactive prompt
+        print(f"PCP-DKFZ Transfer Tool v{VERSION}")
+        print(f"Server: {NEXTCLOUD_URL}\n")
+        username = input("Username: ")
+        password = getpass.getpass("Password: ")
+        return username, password
+
+def upload_recursive(client, local_path, remote_base, quiet=False):
+    """Upload directory recursively"""
+    local_path = Path(local_path)
+    uploaded = 0
+    failed = 0
+
+    # Create remote directory
+    remote_dir = f"{remote_base}/{local_path.name}"
+    client.create_directory(remote_dir)
+
+    # Walk through local directory
+    for root, dirs, files in os.walk(local_path):
+        # Create directories
+        for dir_name in dirs:
+            local_dir = Path(root) / dir_name
+            rel_path = local_dir.relative_to(local_path.parent)
+            remote_path = f"{remote_base}/{rel_path.as_posix()}"
+            client.create_directory(remote_path)
+
+        # Upload files
+        for file_name in files:
+            local_file = Path(root) / file_name
+            rel_path = local_file.relative_to(local_path.parent)
+            remote_file = f"{remote_base}/{rel_path.as_posix()}"
+
+            if not quiet:
+                print(f"Uploading {rel_path}... ", end='', flush=True)
+
+            if client.upload_file(str(local_file), remote_file):
+                uploaded += 1
+                if not quiet:
+                    print("✓")
+            else:
+                failed += 1
+                if not quiet:
+                    print("✗")
+
+    return uploaded, failed
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='PCP-DKFZ Transfer Tool - Upload, download, and share files',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Upload file
+  %(prog)s upload myfile.pdf /Documents/
+
+  # Upload folder
+  %(prog)s upload ./data /Projects/
+
+  # Download file
+  %(prog)s download /Documents/report.pdf ./
+
+  # Create share
+  %(prog)s share /Documents/report.pdf -p password -e 7
+
+  # Download from share
+  %(prog)s download https://nextcloud.com/s/TOKEN ./report.pdf
+
+Environment:
+  NEXTCLOUD_TOKEN=username:password  (to avoid password prompts)
+        """
+    )
+
+    parser.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
+    parser.add_argument('-t', '--token', help='Authentication token (username:password)')
+    parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
+
+    subparsers = parser.add_subparsers(dest='command', help='Commands')
+
+    # Upload command
+    upload_parser = subparsers.add_parser('upload', help='Upload files or folders')
+    upload_parser.add_argument('source', help='Local file or folder')
+    upload_parser.add_argument('destination', help='Remote destination path')
+
+    # Download command
+    download_parser = subparsers.add_parser('download', help='Download files')
+    download_parser.add_argument('source', help='Remote file path or share URL')
+    download_parser.add_argument('destination', nargs='?', default='.', help='Local destination')
+    download_parser.add_argument('-p', '--password', help='Password for protected share')
+
+    # Share command
+    share_parser = subparsers.add_parser('share', help='Create public share')
+    share_parser.add_argument('path', help='File or folder to share')
+    share_parser.add_argument('-p', '--password', help='Set share password')
+    share_parser.add_argument('-e', '--expiry', type=int, help='Expiry in days')
+
+    args = parser.parse_args()
+
+    if not args.command:
+        parser.print_help()
+        return
+
+    # Handle share downloads separately (no auth needed)
+    if args.command == 'download' and args.source.startswith('http'):
+        # Download from public share
+        print(f"Downloading from share: {args.source}")
+
+        # Extract token and build WebDAV URL if password is provided
+        if args.password:
+            token = args.source.split('/s/')[-1].split('/')[0]
+            client = NextcloudClient(token, args.password)
+            url = f"{NEXTCLOUD_URL}/public.php/webdav"
+        else:
+            client = NextcloudClient()
+            url = f"{args.source}/download"
+
+        if client.download_file(url, args.destination):
+            print(f"✓ Downloaded to {args.destination}")
+        else:
+            print("✗ Download failed")
+            sys.exit(1)
+        return
+
+    # Get credentials for authenticated operations
+    username, password = get_credentials(args)
+    client = NextcloudClient(username, password)
+
+    # Test connection
+    if not args.quiet:
+        print("Testing connection... ", end='', flush=True)
+
+    if not client.test_connection():
+        print("✗")
+        print("Authentication failed! Check your credentials.")
+        sys.exit(1)
+    elif not args.quiet:
+        print("✓")
+
+    # Execute command
+    if args.command == 'upload':
+        source = Path(args.source)
+
+        if not source.exists():
+            print(f"Error: Source not found: {args.source}")
+            sys.exit(1)
+
+        if source.is_file():
+            # Upload single file
+            if not args.quiet:
+                print(f"Uploading {source.name}... ", end='', flush=True)
+
+            if client.upload_file(str(source), args.destination):
+                if not args.quiet:
+                    print("✓")
+                    print(f"Uploaded to: {args.destination}")
+            else:
+                print("✗")
+                sys.exit(1)
+
+        elif source.is_dir():
+            # Upload directory
+            print(f"Uploading directory {source.name}...")
+            uploaded, failed = upload_recursive(client, str(source), args.destination, args.quiet)
+            print(f"\n✓ Uploaded {uploaded} files")
+            if failed > 0:
+                print(f"✗ Failed: {failed} files")
+                sys.exit(1)
+
+    elif args.command == 'download':
+        # Download user file
+        local_dest = args.destination
+        if os.path.isdir(local_dest):
+            local_dest = os.path.join(local_dest, os.path.basename(args.source))
+
+        print(f"Downloading {args.source}...")
+        if client.download_file(args.source, local_dest):
+            print(f"✓ Downloaded to {local_dest}")
+        else:
+            print("✗ Download failed")
+            sys.exit(1)
+
+    elif args.command == 'share':
+        # Create share
+        print(f"Creating share for {args.path}...")
+        share = client.create_share(args.path, args.password, args.expiry)
+
+        if share:
+            print("\n✅ Share created successfully!\n")
+            print(f"📎 Share URL: {share['url']}")
+            if args.password:
+                print(f"🔒 Password: {args.password}")
+            if args.expiry:
+                print(f"📅 Expires: {args.expiry} days")
+
+            print("\n📥 Download commands:")
+            print("-" * 50)
+            if args.password:
+                print(f"# With password:")
+                print(f"pcpdt download {share['url']} -p {args.password}")
+            else:
+                print(f"# Direct download:")
+                print(f"wget '{share['url']}/download'")
+                print(f"# Or using pcpdt:")
+                print(f"pcpdt download {share['url']}")
+            print("-" * 50)
+        else:
+            print("✗ Failed to create share")
+            sys.exit(1)
+
+if __name__ == "__main__":
+    main()
