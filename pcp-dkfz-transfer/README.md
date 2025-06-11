@@ -59,7 +59,7 @@ export NEXTCLOUD_TOKEN="your-username:your-app-password"
 Simply run any command without setting the token, and you'll be prompted for credentials.
 
 **Important**: Use app passwords, not your main password!
-Get an app password from: https://cbioportal-upload.pedcanportal.de/settings/user/security
+Get an app password from: https://cbioportal-upload.pedcanportal.eu/settings/user/security
 
 ## Usage
 
@@ -88,10 +88,10 @@ pcpdt download /Projects/data.csv ~/Downloads/
 Download from a public share:
 ```bash
 # Simple download (no password)
-pcpdt download https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3 ./
+pcpdt download https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3 ./
 
 # Password-protected share
-pcpdt download https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3 ./ -p secretpass
+pcpdt download https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3 ./ -p secretpass
 ```
 
 ### Create Shares
@@ -120,7 +120,7 @@ pcpdt share /Shared/results.tar.gz -p "SecurePass123" -e 14
 # Output:
 # ✅ Share created successfully!
 # 
-# 📎 Share URL: https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3
+# 📎 Share URL: https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3
 # 🔒 Password: SecurePass123
 # 📅 Expires: 14 days
 # 
@@ -148,13 +148,13 @@ rm backup-$DATE.tar.gz
 On a remote HPC cluster without GUI:
 ```bash
 # Option 1: Using wget (if pcpdt not available)
-wget "https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3/download" -O data.zip
+wget "https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3/download" -O data.zip
 
 # Option 2: Using pcpdt
-./pcpdt download https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3 data.zip
+./pcpdt download https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3 data.zip
 
 # Option 3: Password-protected share
-./pcpdt download https://cbioportal-upload.pedcanportal.de/s/Hy7Kg9sX3 -p password
+./pcpdt download https://cbioportal-upload.pedcanportal.eu/s/Hy7Kg9sX3 -p password
 ```
 
 ## Advanced Usage
