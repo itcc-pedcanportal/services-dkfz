@@ -108,14 +108,11 @@ docker exec nextcloud php /tmp/update-shared-folders-hook.php
 echo ""
 echo "=== Verifying Setup ==="
 
-# Check if folders exist
-echo "Checking folders..."
-docker exec nextcloud ls -la /mnt/uploads/_shared/
-
 # List current shares
 echo ""
 echo "Current shares:"
-docker exec nextcloud php occ sharing:list | grep "_shared" || echo "No shares found via OCC"
+docker exec nextcloud ls -la /mnt/uploads/_shared/
+
 
 # Test with curl
 echo ""
