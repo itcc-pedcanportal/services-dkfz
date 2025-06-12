@@ -77,8 +77,9 @@ These generated ITCC pseudonyms should be used across all datasets when referrin
 
 For any questions or issues regarding the Mainzelliste pseudonymization service, please contact:
 
-**Julius Müller**  
+*Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
+
 ---
 
 For more information about available ITCC PedCanPortal services, please refer to the [Services Guide](services-guide.md).
