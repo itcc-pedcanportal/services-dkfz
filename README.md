@@ -10,6 +10,7 @@ This repository contains documentation for ITCC members on how to access and use
   - [Pseudonymization Service](#pseudonymization-service)
 - [Requesting Access](#requesting-access)
 - [Contact Information](#contact-information)
+- [Contributing](#contributing)
 - [Additional Documentation](#additional-documentation)
 
 ## Overview
@@ -52,12 +53,13 @@ Please include the following information in your request:
 2. The service(s) you need access to
 3. The purpose of your access request
 
-## Contact Information
+## Contributing
 
-For any questions or issues regarding data upload or access to the ITCC PedCanPortal services, please contact:
+If you would like to contribute code to this documentation repository, please contact:
 
 *Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
+
 
 ---
 
