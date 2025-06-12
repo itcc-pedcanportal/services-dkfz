@@ -58,7 +58,6 @@ For any questions or issues regarding data upload or access to the ITCC PedCanPo
 
 **Julius Müller**  
 Email: julius.mueller@dkfz-heidelberg.de
-
 ---
 
 ## Additional Documentation
