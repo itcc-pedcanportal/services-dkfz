@@ -24,27 +24,15 @@ Before using the Mainzelliste service, ensure you have:
 
 1. Completed all steps in the [main data upload guide](../README.md)
 2. Received confirmation of access from the DKFZ team
-3. Set up SSH tunneling as described in the [Proxy Access Guide](proxy-access-guide.md)
 
 ## Accessing the Mainzelliste Service
 
-The Mainzelliste service is available at:
+The Mainzelliste service is now directly accessible at:
 ```
-http://10.133.255.26:4200/
-```
-
-**Note:** This service can only be accessed by setting up the SOCKS proxy as explained in the [Proxy Access Guide](proxy-access-guide.md).
-
-To access the service, you'll need to set up an SSH tunnel:
-
-```bash
-ssh -L 4200:10.133.255.26:4200 username@vm-hostname
+https://pseudonymization.pedcanportal.eu/
 ```
 
-After establishing the connection, you can access the service by opening a browser and navigating to:
-```
-http://localhost:4200
-```
+To access the service, simply open a browser and navigate to the URL above. You will need to log in with the credentials provided to you after requesting access.
 
 ## Preparing Your Data
 
@@ -70,7 +58,7 @@ Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 1. Navigate to the "Bulk Pseudonymization" page at:
    ```
-   http://localhost:4200/bulk-pseudonymization
+   https://pseudonymization.pedcanportal.eu/bulk-pseudonymization
    ```
 
 2. Click on the "Choose File" button and select your prepared CSV file
@@ -94,4 +82,4 @@ Email: julius.mueller@dkfz-heidelberg.de
 
 ---
 
-For more information about accessing DKFZ services, please refer to the [Proxy Access Guide](proxy-access-guide.md).
+For more information about available ITCC PedCanPortal services, please refer to the [Services Guide](services-guide.md).
