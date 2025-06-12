@@ -57,7 +57,6 @@ Please include the following information in your request:
 
 If you would like to contribute code to this documentation repository, please contact:
 
-*Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
 
 
