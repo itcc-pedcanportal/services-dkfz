@@ -56,8 +56,9 @@ Please include the following information in your request:
 
 For any questions or issues regarding data upload or access to the ITCC PedCanPortal services, please contact:
 
-**Julius Müller**  
+*Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
+
 ---
 
 ## Additional Documentation
