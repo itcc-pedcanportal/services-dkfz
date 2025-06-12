@@ -1,218 +1,68 @@
-# PCP-DKFZ Transfer Tool (pcpdt)
+# ITCC PedCanPortal Services Guide
 
-A simple, cross-platform command-line tool for uploading, downloading, and sharing files via the PedCanPortal Nextcloud instance.
+This repository contains documentation for ITCC members on how to access and use the services provided by the ITCC PedCanPortal hosted at DKFZ Heidelberg.
 
-## Features
+## Table of Contents
+- [Overview](#overview)
+- [Available Services](#available-services)
+  - [cBioPortal Upload Service](#cbioportal-upload-service)
+  - [cBioPortal Instance](#cbioportal-instance)
+  - [Pseudonymization Service](#pseudonymization-service)
+- [Requesting Access](#requesting-access)
+- [Contact Information](#contact-information)
+- [Additional Documentation](#additional-documentation)
 
-- **Upload** files and folders to your personal space or PedCanPortal internal shared folders
-- **Download** files from Nextcloud
-- **Access shared folders** for collaboration
-- **Internal sharing** with users and groups (no public links)
-- **Secure** - uses HTTPS and app passwords
-- **Cross-platform** - works on Windows, macOS, and Linux
+## Overview
 
-## Shared Folders
+The ITCC PedCanPortal provides several web services to support data sharing, analysis, and pseudonymization for the consortium. All services are directly accessible via their respective URLs.
 
-This Nextcloud instance provides shared folders for collaboration:
+## Available Services
 
-- **`/_shared/pedcanportal_all/`** - Available to all authenticated users (read/write)
-- **`/_shared/cbioportal_uploaders/`** - Only for users with `cbioportal_uploaders` role (read/write)
+### cBioPortal Upload Service
 
-**Note:** Public share links are restricted to admin users only. All sharing is done internally.
+**URL**: [https://cbioportal-upload.pedcanportal.eu/](https://cbioportal-upload.pedcanportal.eu/)
 
-## Requirements
+This service is specifically designed for data upload to the cBioPortal instance. It can also be used as a general file transfer and storage space within the ITCC PedCanPortal ecosystem.
 
-- Python 3.6 or higher (pre-installed on most modern systems)
-- Nextcloud account with app password
+For detailed instructions on how to use this service, please refer to the [PCP-DKFZ Transfer Tool documentation](pcp-dkfz-transfer/README.md).
 
-## Installation
+### cBioPortal Instance
 
-1. Clone the repository:
-```bash
-git clone https://github.com/itcc-pedcanportal/upload-dkfz.git
-cd upload-dkfz/pcp-dkfz-transfer
-```
+**URL**: [https://cbioportal.pedcanportal.eu/](https://cbioportal.pedcanportal.eu/)
 
-2. The script is already executable. If not:
-```bash
-chmod +x pcpdt
-```
+This is the PedCanPortal internal cBioPortal instance for exploring and analyzing cancer genomics data sets.
 
-3. Optionally, add to your PATH:
-```bash
-# Linux/macOS
-sudo cp pcpdt /usr/local/bin/
+### Pseudonymization Service
 
-# Or add current directory to PATH
-echo 'export PATH="$PATH:'$(pwd)'"' >> ~/.bashrc
-source ~/.bashrc
-```
+**URL**: [https://pseudonymization.pedcanportal.eu/](https://pseudonymization.pedcanportal.eu/)
 
-## Authentication
+This is the pseudonymization service (Mainzelliste) used for generating unified ITCC sample IDs across the consortium.
 
-### Get App Password
+For detailed instructions on how to use this service, please refer to the [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md).
 
-1. Log in to Nextcloud: https://cbioportal-upload.pedcanportal.eu
-2. Go to Settings → Security
-3. Create a new app password
-4. Use this password with your username
+## Requesting Access
 
-### Set Authentication
+To request access to any of these services, please send an email to:
 
-**Method 1: Environment Variable (Recommended)**
-```bash
-export NEXTCLOUD_TOKEN="your-username:your-app-password"
-```
+**Julius Müller**  
+Email: julius.mueller@dkfz-heidelberg.de
 
-**Method 2: Interactive Prompt**
-Just run any command without setting the token.
+Please include the following information in your request:
+1. Your name and institution
+2. The service(s) you need access to
+3. The purpose of your access request
 
-## Usage
+## Contact Information
 
-### Show Shared Folders Information
-```bash
-pcpdt info
-```
+For any questions or issues regarding data upload or access to the ITCC PedCanPortal services, please contact:
 
-### Upload Files
+**Julius Müller**  
+Email: julius.mueller@dkfz-heidelberg.de
 
-Upload to your personal space:
-```bash
-pcpdt upload report.pdf /Documents/
-pcpdt upload data.csv /Projects/Analysis/
-```
+---
 
-Upload to shared folders:
-```bash
-# Upload to shared folder (all users)
-pcpdt upload results.csv /_shared/pedcanportal_all/
+## Additional Documentation
 
-# Upload to restricted folder (cbioportal_uploaders only)
-pcpdt upload sensitive-data.tar.gz /_shared/cbioportal_uploaders/
-```
-
-Upload entire folder:
-```bash
-pcpdt upload ./results /Projects/Experiment1/
-```
-
-### Download Files
-
-Download from your personal space:
-```bash
-pcpdt download /Documents/report.pdf ./
-pcpdt download /Projects/data.csv ~/Downloads/
-```
-
-Download from shared folders:
-```bash
-pcpdt download /_shared/pedcanportal_all/shared-data.csv ./
-```
-
-### List Files
-
-List files in a directory:
-```bash
-pcpdt list /Documents/
-pcpdt list /_shared/pedcanportal_all/
-```
-
-### Share with Other Users (Internal Only)
-
-Share with specific user:
-```bash
-pcpdt share /Documents/report.pdf colleague_username
-```
-
-Share with group (use @ prefix):
-```bash
-pcpdt share /Projects/results.csv @researchers -p write
-```
-
-Available permissions: `read`, `write`, `all`
-
-## Examples
-
-### Example 1: Collaborate via Shared Folder
-
-```bash
-# Upload data for all team members
-pcpdt upload analysis-results.xlsx /_shared/pedcanportal_all/2024-06-Results/
-
-# Team members can download
-pcpdt download /_shared/pedcanportal_all/2024-06-Results/analysis-results.xlsx ./
-```
-
-### Example 2: Restricted Data Upload
-
-```bash
-# Only users with cbioportal_uploaders role can access
-pcpdt upload patient-data.tar.gz /_shared/cbioportal_uploaders/cohort-A/
-
-# List files in restricted folder (only if you have access)
-pcpdt list /_shared/cbioportal_uploaders/
-```
-
-### Example 3: Automated Script
-
-```bash
-#!/bin/bash
-# Daily upload to shared folder
-
-DATE=$(date +%Y%m%d)
-REPORT="daily-report-$DATE.pdf"
-
-# Generate report
-generate_report.sh > "$REPORT"
-
-# Upload to shared folder
-NEXTCLOUD_TOKEN="user:app-password" pcpdt upload "$REPORT" /_shared/pedcanportal_all/reports/
-
-# Clean up
-rm "$REPORT"
-```
-
-## Important Notes
-
-1. **No Public Links**: Public share links are disabled for regular users. Only admins can create public links.
-
-2. **Internal Sharing Only**: Use the `share` command to share with other Nextcloud users or groups.
-
-3. **Shared Folder Access**: 
-   - Everyone can read/write to `/_shared/pedcanportal_all/`
-   - Only users with `cbioportal_uploaders` role can access `/_shared/cbioportal_uploaders/`
-
-4. **App Passwords**: Always use app passwords, never your main login password.
-
-## Troubleshooting
-
-### "Authentication failed"
-- Ensure you're using an app password, not your regular password
-- Check username is correct
-- Verify token format: `username:app-password`
-
-### "Permission denied" accessing shared folders
-- `/_shared/pedcanportal_all/` - Should work for all authenticated users
-- `/_shared/cbioportal_uploaders/` - Check if you have the `cbioportal_uploaders` role
-
-### Cannot create public share links
-- This is intentional - only admins can create public links
-- Use internal sharing: `pcpdt share file.txt @groupname`
-
-## Platform Notes
-
-### Windows
-```cmd
-python pcpdt upload C:\data\file.txt /Documents/
-```
-
-### macOS/Linux
-```bash
-./pcpdt upload ~/data/file.txt /Documents/
-```
-
-## Support
-
-- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/upload-dkfz)
-- Access problems: Contact your Nextcloud administrator
-- Server: https://cbioportal-upload.pedcanportal.eu
+- [Services Guide](docs/services-guide.md) - Detailed information about all available ITCC PedCanPortal services
+- [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md) - Instructions for generating unified ITCC sample IDs using the Mainzelliste service
+- [PCP-DKFZ Transfer Tool](pcp-dkfz-transfer/README.md) - Documentation for the data transfer tool
