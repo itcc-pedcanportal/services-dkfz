@@ -21,11 +21,11 @@ docker exec nextcloud mkdir -p /mnt/uploads/_shared/pedcanportal_all
 docker exec nextcloud mkdir -p /mnt/uploads/_shared/cbioportal_uploaders
 
 # Set proper ownership
-# docker exec nextcloud chown -R www-data:www-data /mnt/uploads/_shared
+docker exec nextcloud chown -R www-data:www-data /mnt/uploads/_shared
 
 # Create admin entries for the folders (so they can be shared)
 echo "Creating admin folder entries..."
-docker exec nextcloud php occ files:scan --path="/admin/files/_shared"
+docker exec -u www-data nextcloud php occ files:scan --path="/admin/files/_shared"
 
 # Share folders with appropriate groups using OCS API
 echo "Setting up folder shares..."
@@ -108,11 +108,14 @@ docker exec nextcloud php /tmp/update-shared-folders-hook.php
 echo ""
 echo "=== Verifying Setup ==="
 
+# Check if folders exist
+echo "Checking folders..."
+docker exec nextcloud ls -la /mnt/uploads/_shared/
+
 # List current shares
 echo ""
 echo "Current shares:"
-docker exec nextcloud ls -la /mnt/uploads/_shared/
-
+docker exec nextcloud php occ sharing:list | grep "_shared" || echo "No shares found via OCC"
 
 # Test with curl
 echo ""
