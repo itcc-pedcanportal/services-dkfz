@@ -30,8 +30,8 @@ This Nextcloud instance provides shared folders for collaboration:
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/itcc-pedcanportal/upload-dkfz.git
-cd upload-dkfz/pcp-dkfz-transfer
+git clone https://github.com/itcc-pedcanportal/services-dkfz.git
+cd services-dkfz/pcp-dkfz-transfer
 ```
 
 2. The script is already executable. If not:
@@ -214,6 +214,6 @@ python pcpdt upload C:\data\file.txt /Documents/
 
 ## Support
 
-- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/upload-dkfz)
+- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/services-dkfz)
 - Access problems: Contact your Nextcloud administrator
 - Server: https://cbioportal-upload.pedcanportal.eu
