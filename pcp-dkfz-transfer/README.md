@@ -7,7 +7,7 @@ A simple, cross-platform command-line tool for uploading, downloading, and shari
 - 📤 **Upload** files and folders to your personal space or shared folders
 - 📥 **Download** files from Nextcloud
 - 📁 **Access shared folders** for collaboration
-- 👥 **Internal sharing** with users and groups (no public links)
+- 👥 **Internal sharing** with specific users (no public links or group sharing)
 - 🔒 **Secure** - uses HTTPS and app passwords
 - 📦 **Zero dependencies** - uses only Python standard library
 - 🖥️ **Cross-platform** - works on Windows, macOS, and Linux
@@ -18,9 +18,12 @@ This Nextcloud instance provides a shared folder for collaboration:
 
 - **`/Global/`** - Available to all authenticated users (read/write)
 
-There is also a top-level directory that is only visible to the admin.
+**IMPORTANT:** 
+- Everything inside `/Global/` is shared among all users (read/write)
+- Everything outside `/Global/` is shared only with the admin
+- There is a top-level directory that is only visible to the admin
 
-**Note:** Public share links are restricted to admin users only. All sharing is done internally.
+**Note:** Public share links are switched off and group sharing is not implemented. All sharing is done internally with specific users only.
 
 ## Requirements
 
@@ -123,12 +126,9 @@ Share with specific user:
 pcpdt share /Documents/report.pdf colleague_username
 ```
 
-Share with group (use @ prefix):
-```bash
-pcpdt share /Projects/results.csv @researchers -p write
-```
-
 Available permissions: `read`, `write`, `all`
+
+**Note:** Group sharing is not implemented in this Nextcloud instance.
 
 ## Examples
 
@@ -173,13 +173,14 @@ rm "$REPORT"
 
 ## Important Notes
 
-1. **No Public Links**: Public share links are disabled for regular users. Only admins can create public links.
+1. **No Public Links**: Public share links are switched off in this Nextcloud instance.
 
-2. **Internal Sharing Only**: Use the `share` command to share with other Nextcloud users or groups.
+2. **Internal Sharing Only**: Use the `share` command to share with specific Nextcloud users (not groups).
 
 3. **Shared Folder Access**: 
-   - Everyone can read/write to `/Global/`
-   - There is also a top-level directory that is only visible to the admin
+   - Everything inside `/Global/` is shared among all users (read/write)
+   - Everything outside `/Global/` is shared only with the admin
+   - There is a top-level directory that is only visible to the admin
 
 4. **App Passwords**: Always use app passwords, never your main login password.
 
@@ -195,8 +196,8 @@ rm "$REPORT"
 - Top-level directory - Only visible to the admin
 
 ### Cannot create public share links
-- This is intentional - only admins can create public links
-- Use internal sharing: `pcpdt share file.txt @groupname`
+- This is intentional - public share links are switched off
+- Use internal sharing: `pcpdt share file.txt username`
 
 ## Platform Notes
 
