@@ -29,7 +29,7 @@ SHARED_FOLDERS = {
     'global': {
         'path': '/Global',
         'description': 'Global shared directory for all users (read/write)',
-        'access': 'All authenticated users'
+        'access': 'All authenticated and authorized users'
     }
 }
 
