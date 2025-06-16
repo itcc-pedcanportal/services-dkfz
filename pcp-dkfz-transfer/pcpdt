@@ -41,9 +41,10 @@ ssl_context = ssl.create_default_context()
 class NextcloudClient:
     """Unified Nextcloud client for all operations"""
 
-    def __init__(self, username=None, password=None):
+    def __init__(self, username=None, password=None, verbose=False):
         self.username = username
         self.password = password
+        self.verbose = verbose
         self.webdav_url = f"{NEXTCLOUD_URL}/remote.php/dav/files"
         self.ocs_url = f"{NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1"
         self.public_url = f"{NEXTCLOUD_URL}/public.php/webdav"
@@ -73,11 +74,13 @@ class NextcloudClient:
                 return response.read(), response.getcode(), response.headers
         except urllib.error.HTTPError as e:
             error_body = e.read().decode('utf-8', errors='ignore')
-            print(f"Debug: HTTP Error {e.code} for URL: {url}")
-            print(f"Debug: Error response: {error_body}")
+            if self.verbose:
+                print(f"Debug: HTTP Error {e.code} for URL: {url}")
+                print(f"Debug: Error response: {error_body}")
             return error_body.encode(), e.code, e.headers
         except Exception as e:
-            print(f"Debug: Request exception: {e}")
+            if self.verbose:
+                print(f"Debug: Request exception: {e}")
             return str(e).encode(), 500, {}
 
 
@@ -97,9 +100,10 @@ class NextcloudClient:
         if remote_path.endswith('/') or not os.path.splitext(remote_path)[1]:
             remote_path = remote_path.rstrip('/') + '/' + os.path.basename(local_path)
 
-        # Debug: Print the URL being constructed
+        # Construct the URL
         url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
-        print(f"Debug: Upload URL: {url}")
+        if self.verbose:
+            print(f"Debug: Upload URL: {url}")
 
         # Read file
         with open(local_path, 'rb') as f:
@@ -110,9 +114,10 @@ class NextcloudClient:
         headers = {'Content-Type': content_type} if content_type else {}
 
         response, code, response_headers = self._make_request(url, method='PUT', data=file_data, headers=headers)
-        print(f"Debug: Response code: {code}")
+        if self.verbose:
+            print(f"Debug: Response code: {code}")
 
-        if code not in [201, 204]:
+        if code not in [201, 204] and self.verbose:
             print(f"Debug: Upload failed with code {code}")
             if response:
                 print(f"Debug: Response body: {response.decode('utf-8', errors='ignore')}")
@@ -133,9 +138,9 @@ class NextcloudClient:
     def download_file(self, remote_path, local_path):
         """Download a file"""
         if remote_path.startswith('http'):
-            # Public share URL - but these are restricted to admins only
-            print("Warning: Public share links are restricted to admin users only.")
-            url = remote_path
+            # Public share URL - but these are switched off
+            print("Error: Public share links are switched off in this Nextcloud instance.")
+            return False
         else:
             # Handle special Global directory
             if remote_path.startswith('/Global/'):
@@ -233,14 +238,14 @@ class NextcloudClient:
 
 
     def share_internal(self, path, group_or_user, permissions='read'):
-        """Create internal share with user or group"""
+        """Create internal share with user"""
         print("Note: This Nextcloud instance is configured for internal sharing only.")
-        print("Public share links are restricted to admin users.")
+        print("Public share links are switched off and group sharing is not implemented.")
         print(f"Sharing {path} with {group_or_user}...")
 
-        # Determine share type (0=user, 1=group)
-        share_type = 1 if group_or_user.startswith('@') else 0
-        share_with = group_or_user.lstrip('@')
+        # Only user sharing is supported
+        share_type = 0  # 0=user
+        share_with = group_or_user.lstrip('@')  # Remove @ if present for backward compatibility
 
         # Map permissions
         perm_map = {
@@ -354,22 +359,27 @@ Examples:
   # List files in Global shared folder
   %(prog)s list /Global/
 
-  # Share with internal group (no public links)
-  %(prog)s share /Documents/report.pdf @researchers
+  # Share with specific user (no public links or group sharing)
+  %(prog)s share /Documents/report.pdf colleague_username
 
 Environment:
   NEXTCLOUD_TOKEN=username:your-app-password  (to avoid password prompts)
 
+Options:
+  -v, --verbose  Show debug output (useful for troubleshooting)
+  -q, --quiet    Suppress progress information
+
 Shared Folders:
   /Global/      - All users (read/write)
 
-Note: Public share links are restricted to admin users only.
+Note: Public share links are switched off and group sharing is not implemented.
         """
     )
 
     parser.add_argument('--version', action='version', version=f'%(prog)s {VERSION}')
     parser.add_argument('-t', '--token', help='Authentication token (username:your-app-password)')
     parser.add_argument('-q', '--quiet', action='store_true', help='Quiet mode')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Verbose mode (show debug output)')
 
     subparsers = parser.add_subparsers(dest='command', help='Commands')
 
@@ -388,9 +398,9 @@ Note: Public share links are restricted to admin users only.
     list_parser.add_argument('path', nargs='?', default='/', help='Remote directory path')
 
     # Share command (internal only)
-    share_parser = subparsers.add_parser('share', help='Share internally with users or groups')
+    share_parser = subparsers.add_parser('share', help='Share internally with specific users')
     share_parser.add_argument('path', help='File or folder to share')
-    share_parser.add_argument('target', help='Username or @groupname')
+    share_parser.add_argument('target', help='Username of the user to share with')
     share_parser.add_argument('-p', '--permissions', choices=['read', 'write', 'all'],
                               default='read', help='Share permissions')
 
@@ -415,13 +425,17 @@ Note: Public share links are restricted to admin users only.
             print(f"  Description: {info['description']}")
             print(f"  Access: {info['access']}")
         print("\n" + "-" * 70)
-        print("\nNote: Public share links are restricted to admin users only.")
-        print("Use internal sharing with groups (@groupname) or specific users.\n")
+        print("\nIMPORTANT SHARING INFORMATION:")
+        print("- Everything inside /Global/ is shared among all users (read/write)")
+        print("- Everything outside /Global/ is shared only with the admin")
+        print("- Public share links are switched off")
+        print("- Group sharing is not implemented")
+        print("\nUse internal sharing with specific users only.\n")
         return
 
     # Get credentials for authenticated operations
     username, password = get_credentials(args)
-    client = NextcloudClient(username, password)
+    client = NextcloudClient(username, password, verbose=args.verbose)
 
     # Test connection
     if not args.quiet:

@@ -10,6 +10,10 @@ export NEXTCLOUD_TOKEN="username:app-password"
 - `/Global/` - All users (read/write)
 - Top-level directory - Admin only
 
+**IMPORTANT:**
+- Everything inside `/Global/` is shared among all users
+- Everything outside `/Global/` is shared only with the admin
+
 ## Commands
 
 ### Info
@@ -39,14 +43,16 @@ pcpdt list /Global/   # List shared folder
 ### Share (Internal Only)
 ```bash
 pcpdt share /file.pdf username      # Share with user
-pcpdt share /file.pdf @groupname    # Share with group
-pcpdt share /folder @team -p write  # Share with write access
+pcpdt share /file.pdf username -p write  # Share with write access
 ```
 
+**Note:** Group sharing is not implemented.
+
 ## Important Notes
-- ❌ **No public links** for regular users (admin only)
-- ✅ Use shared folders for collaboration
-- ✅ Internal sharing with users/groups allowed
+- ❌ **No public links** - public sharing is switched off
+- ❌ **No group sharing** - group sharing is not implemented
+- ✅ Use `/Global/` folder for collaboration
+- ✅ Internal sharing with specific users only
 - 🔐 Always use app passwords
 
 ## Examples
@@ -68,5 +74,5 @@ pcpdt upload patient-data.zip /Documents/sensitive-data/
 
 ## Troubleshooting
 - **Auth failed**: Check app password
-- **Access denied**: Check folder permissions/role
-- **No public links**: Use internal sharing instead
+- **Access denied**: Remember that only `/Global/` is shared with all users
+- **Sharing issues**: Only sharing with specific users is supported
