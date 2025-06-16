@@ -7,8 +7,8 @@ export NEXTCLOUD_TOKEN="username:app-password"
 ```
 
 ## Shared Folders
-- `/_shared/pedcanportal_all/` - All users (read/write)
-- `/_shared/cbioportal_uploaders/` - Restricted access (read/write)
+- `/Global/` - All users (read/write)
+- Top-level directory - Admin only
 
 ## Commands
 
@@ -20,20 +20,20 @@ pcpdt info                          # Show shared folders info
 ### Upload
 ```bash
 pcpdt upload file.pdf /Documents/   # To personal space
-pcpdt upload file.csv /_shared/pedcanportal_all/   # To shared folder
+pcpdt upload file.csv /Global/   # To shared folder
 pcpdt upload ./folder /Projects/    # Upload entire folder
 ```
 
 ### Download
 ```bash
 pcpdt download /Documents/file.pdf ./
-pcpdt download /_shared/pedcanportal_all/data.csv ./
+pcpdt download /Global/data.csv ./
 ```
 
 ### List
 ```bash
 pcpdt list /                        # List root directory
-pcpdt list /_shared/pedcanportal_all/   # List shared folder
+pcpdt list /Global/   # List shared folder
 ```
 
 ### Share (Internal Only)
@@ -54,16 +54,16 @@ pcpdt share /folder @team -p write  # Share with write access
 ### Team Collaboration
 ```bash
 # Upload to shared space
-pcpdt upload results.xlsx /_shared/pedcanportal_all/june-2024/
+pcpdt upload results.xlsx /Global/june-2024/
 
 # Others download
-pcpdt download /_shared/pedcanportal_all/june-2024/results.xlsx
+pcpdt download /Global/june-2024/results.xlsx
 ```
 
-### Restricted Upload
+### Personal Space Upload
 ```bash
-# Only for cbioportal_uploaders role
-pcpdt upload patient-data.zip /_shared/cbioportal_uploaders/
+# Upload to your personal space
+pcpdt upload patient-data.zip /Documents/sensitive-data/
 ```
 
 ## Troubleshooting

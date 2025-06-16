@@ -26,17 +26,13 @@ VERSION = "1.1.0"
 
 # Shared folders configuration
 SHARED_FOLDERS = {
-    'pedcanportal_all': {
-        'path': '/_shared/pedcanportal_all',
-        'description': 'Shared folder for all PedCanPortal users (read/write)',
+    'global': {
+        'path': '/Global',
+        'description': 'Global shared directory for all users (read/write)',
         'access': 'All authenticated users'
-    },
-    'cbioportal_uploaders': {
-        'path': '/_shared/cbioportal_uploaders',
-        'description': 'Shared folder for cBioPortal uploaders only (read/write)',
-        'access': 'Users with cbioportal_uploaders role'
     }
 }
+
 
 # Create SSL context that handles certificates properly
 ssl_context = ssl.create_default_context()
@@ -76,7 +72,14 @@ class NextcloudClient:
             with urllib.request.urlopen(req, context=ssl_context) as response:
                 return response.read(), response.getcode(), response.headers
         except urllib.error.HTTPError as e:
-            return e.read(), e.code, e.headers
+            error_body = e.read().decode('utf-8', errors='ignore')
+            print(f"Debug: HTTP Error {e.code} for URL: {url}")
+            print(f"Debug: Error response: {error_body}")
+            return error_body.encode(), e.code, e.headers
+        except Exception as e:
+            print(f"Debug: Request exception: {e}")
+            return str(e).encode(), 500, {}
+
 
     def test_connection(self):
         """Test if credentials are valid"""
@@ -90,10 +93,13 @@ class NextcloudClient:
         if not remote_path.startswith('/'):
             remote_path = '/' + remote_path
 
-        if remote_path.endswith('/'):
-            remote_path = remote_path + os.path.basename(local_path)
+        # if the target exists and is a collection, or if the user didn't provide a filename…
+        if remote_path.endswith('/') or not os.path.splitext(remote_path)[1]:
+            remote_path = remote_path.rstrip('/') + '/' + os.path.basename(local_path)
 
+        # Debug: Print the URL being constructed
         url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        print(f"Debug: Upload URL: {url}")
 
         # Read file
         with open(local_path, 'rb') as f:
@@ -103,14 +109,26 @@ class NextcloudClient:
         content_type, _ = mimetypes.guess_type(local_path)
         headers = {'Content-Type': content_type} if content_type else {}
 
-        _, code, _ = self._make_request(url, method='PUT', data=file_data, headers=headers)
+        response, code, response_headers = self._make_request(url, method='PUT', data=file_data, headers=headers)
+        print(f"Debug: Response code: {code}")
+
+        if code not in [201, 204]:
+            print(f"Debug: Upload failed with code {code}")
+            if response:
+                print(f"Debug: Response body: {response.decode('utf-8', errors='ignore')}")
+
         return code in [201, 204]
 
     def create_directory(self, remote_path):
         """Create a directory"""
-        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        # Handle special Global directory
+        if remote_path.startswith('/Global/') or remote_path == '/Global':
+            url = f"{NEXTCLOUD_URL}/remote.php/dav/files{urllib.parse.quote(remote_path)}"
+        else:
+            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
         _, code, _ = self._make_request(url, method='MKCOL')
         return code in [201, 405]  # 405 means already exists
+
 
     def download_file(self, remote_path, local_path):
         """Download a file"""
@@ -119,8 +137,12 @@ class NextcloudClient:
             print("Warning: Public share links are restricted to admin users only.")
             url = remote_path
         else:
-            # User file
-            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+            # Handle special Global directory
+            if remote_path.startswith('/Global/'):
+                url = f"{NEXTCLOUD_URL}/remote.php/dav/files{urllib.parse.quote(remote_path)}"
+            else:
+                # User file
+                url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
 
         try:
             req = urllib.request.Request(url)
@@ -160,7 +182,11 @@ class NextcloudClient:
 
     def list_files(self, remote_path):
         """List files in a directory"""
-        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        # Handle special Global directory
+        if remote_path.startswith('/Global/') or remote_path == '/Global':
+            url = f"{NEXTCLOUD_URL}/remote.php/dav/files{urllib.parse.quote(remote_path)}"
+        else:
+            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
 
         # WebDAV PROPFIND request
         xml_request = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -204,6 +230,7 @@ class NextcloudClient:
             except:
                 return []
         return []
+
 
     def share_internal(self, path, group_or_user, permissions='read'):
         """Create internal share with user or group"""
@@ -315,17 +342,17 @@ Examples:
   # Upload file to your personal space
   %(prog)s upload myfile.pdf /Documents/
 
-  # Upload to shared folder (all users can access)
-  %(prog)s upload results.csv /_shared/pedcanportal_all/
+  # Upload to Global shared folder (all users can access)
+  %(prog)s upload results.csv /Global/
 
-  # Upload to restricted folder (cbioportal_uploaders only)
-  %(prog)s upload data.tar.gz /_shared/cbioportal_uploaders/
+  # Upload to your personal space
+  %(prog)s upload data.tar.gz /Documents/
 
   # Download file  
   %(prog)s download /Documents/report.pdf ./
 
-  # List files in shared folder
-  %(prog)s list /_shared/pedcanportal_all/
+  # List files in Global shared folder
+  %(prog)s list /Global/
 
   # Share with internal group (no public links)
   %(prog)s share /Documents/report.pdf @researchers
@@ -334,8 +361,7 @@ Environment:
   NEXTCLOUD_TOKEN=username:your-app-password  (to avoid password prompts)
 
 Shared Folders:
-  /_shared/pedcanportal_all/      - All users (read/write)
-  /_shared/cbioportal_uploaders/  - cBioPortal uploaders only (read/write)
+  /Global/      - All users (read/write)
 
 Note: Public share links are restricted to admin users only.
         """
@@ -418,11 +444,9 @@ Note: Public share links are restricted to admin users only.
             sys.exit(1)
 
         # Check if uploading to shared folder
-        if args.destination.startswith('/_shared/'):
-            folder = args.destination.split('/')[2]
-            if folder in SHARED_FOLDERS:
-                print(f"Uploading to shared folder: {folder}")
-                print(f"Access: {SHARED_FOLDERS[folder]['access']}")
+        if args.destination.startswith('/Global'):
+            print(f"Uploading to Global shared folder")
+            print(f"Access: {SHARED_FOLDERS['global']['access']}")
 
         if source.is_file():
             # Upload single file

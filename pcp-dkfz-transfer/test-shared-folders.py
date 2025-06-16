@@ -30,23 +30,14 @@ def test_shared_folders():
 
     print("✓ Authentication token found\n")
 
-    # Test 1: List shared folders
-    print("Test 1: Listing shared folders...")
-    success, stdout, stderr = run_command("./pcpdt list /_shared/")
+    # Test 1: List Global shared folder
+    print("Test 1: Listing Global shared folder...")
+    success, stdout, stderr = run_command("./pcpdt list /Global/")
 
     if success:
-        print("✓ Can list /_shared/ directory")
-        if "pedcanportal_all" in stdout:
-            print("✓ Found pedcanportal_all folder")
-        else:
-            print("⚠️  pedcanportal_all folder not visible")
-
-        if "cbioportal_uploaders" in stdout:
-            print("✓ Found cbioportal_uploaders folder (user has access)")
-        else:
-            print("ℹ️  cbioportal_uploaders not visible (user may lack access - this is normal)")
+        print("✓ Can list /Global/ directory")
     else:
-        print("❌ Cannot list shared folders")
+        print("❌ Cannot list Global shared folder")
         print(f"Error: {stderr}")
         return False
 
@@ -63,17 +54,17 @@ def test_shared_folders():
 
     test_filename = f"test-{os.getpid()}.txt"
 
-    # Try upload to pedcanportal_all
+    # Try upload to Global folder
     success, stdout, stderr = run_command(
-        f"./pcpdt upload {test_file} /_shared/pedcanportal_all/{test_filename}"
+        f"./pcpdt upload {test_file} /Global/{test_filename}"
     )
 
     if success:
-        print("✓ Successfully uploaded to /_shared/pedcanportal_all/")
+        print("✓ Successfully uploaded to /Global/")
 
         # Test 3: List to verify upload
         print("\nTest 3: Verifying uploaded file...")
-        success, stdout, stderr = run_command("./pcpdt list /_shared/pedcanportal_all/")
+        success, stdout, stderr = run_command("./pcpdt list /Global/")
 
         if success and test_filename in stdout:
             print("✓ Uploaded file is visible in listing")
@@ -82,7 +73,7 @@ def test_shared_folders():
             print("\nTest 4: Testing download...")
             download_path = f"/tmp/download-{test_filename}"
             success, stdout, stderr = run_command(
-                f"./pcpdt download /_shared/pedcanportal_all/{test_filename} {download_path}"
+                f"./pcpdt download /Global/{test_filename} {download_path}"
             )
 
             if success and os.path.exists(download_path):
@@ -106,26 +97,21 @@ def test_shared_folders():
         print("❌ Upload failed")
         print(f"Error: {stderr}")
         print("\nPossible reasons:")
-        print("- User doesn't have write access to /_shared/pedcanportal_all/")
+        print("- User doesn't have write access to /Global/")
         print("- Shared folder doesn't exist")
         print("- Authentication issue")
 
     # Cleanup
     os.unlink(test_file)
 
-    # Test 5: Test restricted folder (if user has access)
-    print("\nTest 5: Testing restricted folder access...")
-    success, stdout, stderr = run_command("./pcpdt list /_shared/cbioportal_uploaders/")
-
-    if success:
-        print("✓ User has access to cbioportal_uploaders folder")
-    else:
-        print("ℹ️  User doesn't have access to cbioportal_uploaders (this is expected for regular users)")
+    # Test 5: Test top-level directory (admin only)
+    print("\nTest 5: Testing top-level directory access...")
+    success, stdout, stderr = run_command("./pcpdt list /")
 
     print("\n=== Test Summary ===")
-    print("Shared folders are configured and working correctly!")
+    print("Shared folder is configured and working correctly!")
     print("\nUsers can collaborate by:")
-    print("1. Uploading to /_shared/pedcanportal_all/")
+    print("1. Uploading to /Global/")
     print("2. Downloading files others have shared")
     print("3. Using pcpdt list to see available files")
 
