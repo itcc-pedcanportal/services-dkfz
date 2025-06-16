@@ -2,12 +2,17 @@
 
 A simple, cross-platform command-line tool for uploading, downloading, and sharing files via the PedCanPortal Nextcloud instance.
 
+**Current Version:** 1.3.1
+
 ## Features
 
 - 📤 **Upload** files and folders to your personal space or shared folders
-- 📥 **Download** files from Nextcloud
+- 📥 **Download** files from Nextcloud with resume support
 - 📁 **Access shared folders** for collaboration
 - 👥 **Internal sharing** with specific users (no public links or group sharing)
+- 📊 **Progress tracking** - visual progress bar with speed and ETA
+- 🔄 **Parallel uploads** - upload multiple files simultaneously
+- 🔁 **Retry mechanism** - automatically handles connection resets
 - 🔒 **Secure** - uses HTTPS and app passwords
 - 📦 **Zero dependencies** - uses only Python standard library
 - 🖥️ **Cross-platform** - works on Windows, macOS, and Linux
@@ -74,8 +79,22 @@ Just run any command without setting the token.
 
 ## Usage
 
-### Show Shared Folders Information
+### Command-Line Options
+
 ```bash
+# Show help
+pcpdt --help
+
+# Enable verbose mode (debug output)
+pcpdt -v <command>
+
+# Quiet mode (suppress progress information)
+pcpdt -q <command>
+```
+
+### Show Information
+```bash
+# Show shared folders and upload methods
 pcpdt info
 ```
 
@@ -98,6 +117,18 @@ Upload entire folder:
 pcpdt upload ./results /Projects/Experiment1/
 ```
 
+Advanced upload options:
+```bash
+# Upload with chunked method (more reliable for unstable connections)
+pcpdt upload --chunk large_file.zip /Global/
+
+# Upload with parallel chunks (faster chunked uploads)
+pcpdt upload --chunk --parallel-chunks 4 large_file.zip /Global/
+
+# Upload directory with parallel file uploads (faster for many small files)
+pcpdt upload -p 8 ./my_folder /Global/
+```
+
 ### Download Files
 
 Download from your personal space:
@@ -110,6 +141,11 @@ Download from shared folder:
 ```bash
 pcpdt download /Global/shared-data.csv ./
 ```
+
+Downloads include:
+- Progress bar showing download status
+- Automatic resume of interrupted downloads
+- Proper handling of large files
 
 ### List Files
 
@@ -131,6 +167,25 @@ Available permissions: `read`, `write`, `all`
 **Note:** Group sharing is not implemented in this Nextcloud instance.
 
 ## Examples
+
+### Example 0: Progress Bar and Performance
+
+```bash
+# Upload with progress bar (automatic)
+pcpdt upload large_file.zip /Global/
+# Output:
+# large_file.zip | ██████████░░░░░░░░ | 50.5% | 5.2 MB/s | ETA: 0:01:30
+
+# Download with progress bar (automatic)
+pcpdt download /Global/large_file.zip ./
+# Output:
+# [========================          ] 67,108,864/134,217,728 bytes
+
+# Parallel uploads for better performance
+pcpdt upload -p 4 ./dataset /Global/
+# Output:
+# Using 4 parallel uploads for 20 files...
+```
 
 ### Example 1: Collaborate via Shared Folder
 
@@ -198,6 +253,13 @@ rm "$REPORT"
 ### Cannot create public share links
 - This is intentional - public share links are switched off
 - Use internal sharing: `pcpdt share file.txt username`
+
+### Connection issues during upload
+- If uploads fail with "Connection reset by peer" errors:
+  - Use chunked mode: `pcpdt upload --chunk large_file.zip /Global/`
+  - For faster chunked uploads: `pcpdt upload --chunk --parallel-chunks 4 large_file.zip /Global/`
+- The tool includes an automatic retry mechanism (up to 20 retries with exponential backoff)
+- Use verbose mode to see detailed error information: `pcpdt -v upload file.txt /Global/`
 
 ## Platform Notes
 
