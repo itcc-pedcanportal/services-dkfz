@@ -23,7 +23,7 @@ The ITCC PedCanPortal provides several web services to support data sharing, ana
 
 **URL**: [https://cbioportal-upload.pedcanportal.eu/](https://cbioportal-upload.pedcanportal.eu/)
 
-This service is specifically designed for data upload to the cBioPortal instance. It can also be used as a general file transfer and storage space within the ITCC PedCanPortal ecosystem.
+This service is specifically designed for data upload to the cBioPortal instance. It can also be used as a general file transfer and storage space within the ITCC PedCanPortal ecosystem. It provides a Global shared folder that everyone can access with read and write permissions, as well as personal spaces for each user.
 
 For detailed instructions on how to use this service, please refer to the [PCP-DKFZ Transfer Tool documentation](pcp-dkfz-transfer/README.md).
 

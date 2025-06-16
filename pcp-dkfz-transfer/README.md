@@ -14,10 +14,11 @@ A simple, cross-platform command-line tool for uploading, downloading, and shari
 
 ## Shared Folders
 
-This Nextcloud instance provides shared folders for collaboration:
+This Nextcloud instance provides a shared folder for collaboration:
 
-- **`/_shared/pedcanportal_all/`** - Available to all authenticated users (read/write)
-- **`/_shared/cbioportal_uploaders/`** - Only for users with `cbioportal_uploaders` role (read/write)
+- **`/Global/`** - Available to all authenticated users (read/write)
+
+There is also a top-level directory that is only visible to the admin.
 
 **Note:** Public share links are restricted to admin users only. All sharing is done internally.
 
@@ -83,13 +84,10 @@ pcpdt upload report.pdf /Documents/
 pcpdt upload data.csv /Projects/Analysis/
 ```
 
-Upload to shared folders:
+Upload to shared folder:
 ```bash
-# Upload to shared folder (all users)
-pcpdt upload results.csv /_shared/pedcanportal_all/
-
-# Upload to restricted folder (cbioportal_uploaders only)
-pcpdt upload sensitive-data.tar.gz /_shared/cbioportal_uploaders/
+# Upload to Global shared folder (all users)
+pcpdt upload results.csv /Global/
 ```
 
 Upload entire folder:
@@ -105,9 +103,9 @@ pcpdt download /Documents/report.pdf ./
 pcpdt download /Projects/data.csv ~/Downloads/
 ```
 
-Download from shared folders:
+Download from shared folder:
 ```bash
-pcpdt download /_shared/pedcanportal_all/shared-data.csv ./
+pcpdt download /Global/shared-data.csv ./
 ```
 
 ### List Files
@@ -115,7 +113,7 @@ pcpdt download /_shared/pedcanportal_all/shared-data.csv ./
 List files in a directory:
 ```bash
 pcpdt list /Documents/
-pcpdt list /_shared/pedcanportal_all/
+pcpdt list /Global/
 ```
 
 ### Share with Other Users (Internal Only)
@@ -138,20 +136,20 @@ Available permissions: `read`, `write`, `all`
 
 ```bash
 # Upload data for all team members
-pcpdt upload analysis-results.xlsx /_shared/pedcanportal_all/2024-06-Results/
+pcpdt upload analysis-results.xlsx /Global/2024-06-Results/
 
 # Team members can download
-pcpdt download /_shared/pedcanportal_all/2024-06-Results/analysis-results.xlsx ./
+pcpdt download /Global/2024-06-Results/analysis-results.xlsx ./
 ```
 
-### Example 2: Restricted Data Upload
+### Example 2: Personal Space Upload
 
 ```bash
-# Only users with cbioportal_uploaders role can access
-pcpdt upload patient-data.tar.gz /_shared/cbioportal_uploaders/cohort-A/
+# Upload to your personal space
+pcpdt upload patient-data.tar.gz /Documents/cohort-A/
 
-# List files in restricted folder (only if you have access)
-pcpdt list /_shared/cbioportal_uploaders/
+# List files in your personal folder
+pcpdt list /Documents/
 ```
 
 ### Example 3: Automated Script
@@ -166,8 +164,8 @@ REPORT="daily-report-$DATE.pdf"
 # Generate report
 generate_report.sh > "$REPORT"
 
-# Upload to shared folder
-NEXTCLOUD_TOKEN="user:app-password" pcpdt upload "$REPORT" /_shared/pedcanportal_all/reports/
+# Upload to Global shared folder
+NEXTCLOUD_TOKEN="user:app-password" pcpdt upload "$REPORT" /Global/reports/
 
 # Clean up
 rm "$REPORT"
@@ -180,8 +178,8 @@ rm "$REPORT"
 2. **Internal Sharing Only**: Use the `share` command to share with other Nextcloud users or groups.
 
 3. **Shared Folder Access**: 
-   - Everyone can read/write to `/_shared/pedcanportal_all/`
-   - Only users with `cbioportal_uploaders` role can access `/_shared/cbioportal_uploaders/`
+   - Everyone can read/write to `/Global/`
+   - There is also a top-level directory that is only visible to the admin
 
 4. **App Passwords**: Always use app passwords, never your main login password.
 
@@ -192,9 +190,9 @@ rm "$REPORT"
 - Check username is correct
 - Verify token format: `username:app-password`
 
-### "Permission denied" accessing shared folders
-- `/_shared/pedcanportal_all/` - Should work for all authenticated users
-- `/_shared/cbioportal_uploaders/` - Check if you have the `cbioportal_uploaders` role
+### "Permission denied" accessing shared folder
+- `/Global/` - Should work for all authenticated users
+- Top-level directory - Only visible to the admin
 
 ### Cannot create public share links
 - This is intentional - only admins can create public links
