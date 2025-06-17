@@ -30,7 +30,7 @@ This Nextcloud instance provides a shared folder for collaboration:
 ## Requirements
 
 - Python 3.6 or higher (pre-installed on most modern systems)
-- Nextcloud account with app password
+- App password from our Nextcloud instance (see Authentication section below)
 
 ## Installation
 
@@ -62,17 +62,34 @@ source ~/.bashrc
 1. Log in to Nextcloud: https://cbioportal-upload.pedcanportal.eu
 2. Go to Settings → Security
 3. Create a new app password
-4. Use this password with your username
+4. Use this password with your username as environment variable or interactive prompt
 
 ### Set Authentication
 
 **Method 1: Environment Variable (Recommended)**
+
+For Linux/macOS (Bash/Zsh):
 ```bash
 export NEXTCLOUD_TOKEN="your-username:your-app-password"
 ```
 
+For Windows Command Prompt:
+```cmd
+set NEXTCLOUD_TOKEN=your-username:your-app-password
+```
+
+For Windows PowerShell:
+```powershell
+$env:NEXTCLOUD_TOKEN = "your-username:your-app-password"
+```
+
+To make the environment variable persistent:
+- **Linux**: Add the export command to your `~/.bashrc` or `~/.zshrc`
+- **macOS**: Add the export command to your `~/.bash_profile` or `~/.zshrc`
+- **Windows**: Set through System Properties > Advanced > Environment Variables
+
 **Method 2: Interactive Prompt**
-Just run any command without setting the token.
+Just run any command without setting the token. The tool will prompt you for credentials.
 
 ## Usage
 
