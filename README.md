@@ -57,6 +57,5 @@ Please include the following information in your request:
 
 ## Additional Documentation
 
-- [Services Guide](docs/services-guide.md) - Detailed information about all available ITCC PedCanPortal services
 - [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md) - Instructions for generating unified ITCC sample IDs using the Mainzelliste service
 - [PCP-DKFZ Transfer Tool](pcp-dkfz-transfer/README.md) - Documentation for the data transfer tool
