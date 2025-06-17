@@ -15,7 +15,6 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import ssl
-import mimetypes
 import xml.etree.ElementTree as ET
 import threading
 import time
@@ -26,7 +25,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Configuration
 NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.eu"
-VERSION = "1.3.3"
+VERSION = "1.0.0"
 
 # Upload configuration - smaller chunks to avoid proxy timeouts
 UPLOAD_CHUNK_SIZE = 2 * 1024 * 1024  # 2MB chunks to stay under proxy limits
@@ -96,6 +95,39 @@ class NextcloudClient:
         try:
             _, code, _ = self._make_request(url, method='PROPFIND', timeout=10)
             return code == 207
+        except:
+            return False
+
+    def is_directory(self, remote_path):
+        """Check if remote path is a directory"""
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        xml_request = '''<?xml version="1.0" encoding="UTF-8"?>
+        <d:propfind xmlns:d="DAV:">
+            <d:prop>
+                <d:resourcetype/>
+            </d:prop>
+        </d:propfind>'''
+
+        try:
+            response, code, _ = self._make_request(
+                url,
+                method='PROPFIND',
+                data=xml_request,
+                headers={'Depth': '0', 'Content-Type': 'text/xml'},
+                timeout=10
+            )
+
+            if code == 207:
+                root = ET.fromstring(response)
+                resourcetype = root.find('.//{DAV:}resourcetype')
+                if resourcetype is not None:
+                    collection = resourcetype.find('{DAV:}collection')
+                    return collection is not None
+            return False
         except:
             return False
 
@@ -532,7 +564,14 @@ class NextcloudClient:
         if not remote_path.startswith('/'):
             remote_path = '/' + remote_path
 
+        # Ensure local_path includes a filename
+        # If local_path is a directory or ends with a separator, append the remote filename
+        if os.path.isdir(local_path) or local_path.endswith(os.sep) or local_path.endswith('/'):
+            os.makedirs(local_path, exist_ok=True)
+            local_path = os.path.join(local_path, os.path.basename(remote_path))
+
         url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        filename = os.path.basename(local_path)
 
         try:
             # Check if partial download exists
@@ -550,6 +589,7 @@ class NextcloudClient:
             if resume_pos > 0:
                 req.add_header('Range', f'bytes={resume_pos}-')
 
+            start_time = datetime.now()
             with urllib.request.urlopen(req, context=ssl_context, timeout=60) as response:
                 # Create directory if needed
                 os.makedirs(os.path.dirname(local_path) or '.', exist_ok=True)
@@ -564,6 +604,7 @@ class NextcloudClient:
                 # Download with progress
                 downloaded = resume_pos
                 mode = 'ab' if resume_pos > 0 else 'wb'
+                last_update = time.time()
 
                 with open(local_path + '.part', mode) as f:
                     while True:
@@ -573,22 +614,104 @@ class NextcloudClient:
                         f.write(chunk)
                         downloaded += len(chunk)
 
-                        if total_size > 0:
-                            progress = int(50 * downloaded / total_size)
+                        # Update progress display
+                        current_time = time.time()
+                        if current_time - last_update >= 0.5 and total_size > 0:
+                            elapsed = (datetime.now() - start_time).total_seconds()
+                            speed = downloaded / elapsed if elapsed > 0 else 0
+                            progress_pct = (downloaded / total_size) * 100
+
+                            # Calculate ETA
+                            if speed > 0:
+                                eta_seconds = (total_size - downloaded) / speed
+                                eta = str(timedelta(seconds=int(eta_seconds)))
+                            else:
+                                eta = "unknown"
+
+                            # Format speed
+                            if speed < 1024:
+                                speed_str = f"{speed:.1f} B/s"
+                            elif speed < 1024 * 1024:
+                                speed_str = f"{speed / 1024:.1f} KB/s"
+                            else:
+                                speed_str = f"{speed / (1024 * 1024):.1f} MB/s"
+
+                            # Progress bar
+                            bar_width = 20
+                            filled_width = int(bar_width * progress_pct / 100)
+                            bar = '█' * filled_width + '░' * (bar_width - filled_width)
+
                             sys.stdout.write(
-                                f"\r[{'=' * progress}{' ' * (50 - progress)}] {downloaded:,}/{total_size:,} bytes")
+                                f"\r{filename} | {bar} | {progress_pct:.1f}% | {speed_str} | ETA: {eta}")
                             sys.stdout.flush()
+                            last_update = current_time
 
                 # Move completed download
                 os.rename(local_path + '.part', local_path)
 
                 if total_size > 0:
-                    sys.stdout.write('\n')
+                    sys.stdout.write(f"\r{filename} | {'█' * 20} | 100.0% | Complete" + " " * 30 + "\n")
+                    sys.stdout.flush()
                 return True
 
         except Exception as e:
             print(f"\nDownload error: {e}")
             return False
+
+    def download_recursive(self, remote_path, local_dir, quiet=False):
+        """Download directory recursively"""
+        downloaded = 0
+        failed = 0
+
+        # Normalize remote path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+        remote_path = remote_path.rstrip('/')
+
+        # Get list of files in the directory
+        try:
+            files = self.list_files(remote_path)
+        except Exception as e:
+            print(f"Error listing directory {remote_path}: {e}")
+            return 0, 1
+
+        if not files:
+            if not quiet:
+                print(f"Directory {remote_path} is empty or not accessible")
+            return 0, 0
+
+        # Process each file/directory
+        for item in files:
+            if item['type'] == 'file':
+                # Download file
+                remote_file = f"{remote_path}/{item['name']}"
+                local_file = os.path.join(local_dir, item['name'])
+
+                if self.download_file(remote_file, local_file):
+                    downloaded += 1
+                else:
+                    failed += 1
+                    if not quiet:
+                        print(f"✗ Failed: {item['name']}")
+
+            elif item['type'] == 'directory':
+                # Create local directory and recurse
+                sub_dir = os.path.join(local_dir, item['name'])
+                os.makedirs(sub_dir, exist_ok=True)
+
+                if self.verbose:
+                    print(f"Entering directory: {item['name']}")
+
+                # Recursively download subdirectory
+                sub_downloaded, sub_failed = self.download_recursive(
+                    f"{remote_path}/{item['name']}",
+                    sub_dir,
+                    quiet
+                )
+                downloaded += sub_downloaded
+                failed += sub_failed
+
+        return downloaded, failed
 
     def list_files(self, remote_path):
         """List files in a directory"""
@@ -887,6 +1010,12 @@ Examples:
   # Download file  
   %(prog)s download /Documents/report.pdf ./
 
+  # Download directory recursively
+  %(prog)s download /Global/my_folder ./
+
+  # Download files with wildcard pattern
+  %(prog)s download '/Global/folder/*.txt' ./
+
   # List files in Global shared folder
   %(prog)s list /Global/
 
@@ -904,6 +1033,13 @@ Upload Methods:
   - --chunk: Robust chunked upload (2MB chunks, slower but handles disconnects)
   - --parallel-chunks N: Upload N chunks simultaneously (only with --chunk)
   - -p N: Upload N files in parallel (for directories)
+
+Download Patterns:
+  - %(prog)s download /remote/dir         → creates ./dir/ with contents
+  - %(prog)s download /remote/dir /local  → creates /local/dir/ with contents
+  - %(prog)s download /remote/file.txt .  → downloads file to current dir
+  - %(prog)s download '/remote/dir/*' .   → downloads all files from dir to current dir
+  - Single quotes prevent shell expansion of wildcards
 
 Note: If uploads fail due to connection resets, use --chunk mode or ask your
 admin to increase proxy timeout settings. Hidden files (starting with .) are
@@ -934,8 +1070,8 @@ skipped by default; use --no-skip-hidden to include them.
                                help='Include hidden files and directories (starting with .)')
 
     # Download command
-    download_parser = subparsers.add_parser('download', help='Download files')
-    download_parser.add_argument('source', help='Remote file path')
+    download_parser = subparsers.add_parser('download', help='Download files or folders')
+    download_parser.add_argument('source', help='Remote file or folder path')
     download_parser.add_argument('destination', nargs='?', default='.', help='Local destination')
 
     # List command
@@ -1031,7 +1167,7 @@ skipped by default; use --no-skip-hidden to include them.
             if client.upload_file(str(source), args.destination,
                                   use_chunks=args.chunk,
                                   parallel_chunks=getattr(args, 'parallel_chunks', 1)):
-                if not args.quiet:
+                if args.verbose:
                     print(f"Uploaded to: {args.destination}")
             else:
                 print("\nUpload failed. Common issues:")
@@ -1060,22 +1196,107 @@ skipped by default; use --no-skip-hidden to include them.
                                                 args.quiet, args.parallel, args.chunk,
                                                 skip_hidden=not getattr(args, 'no_skip_hidden', False),
                                                 verbose=args.verbose)
-            print(f"\n✓ Uploaded {uploaded} files")
+            print(f"✓ Uploaded {uploaded} files")
             if failed > 0:
                 print(f"✗ Failed: {failed} files")
                 sys.exit(1)
 
     elif args.command == 'download':
+        remote_source = args.source
         local_dest = args.destination
-        if os.path.isdir(local_dest):
-            local_dest = os.path.join(local_dest, os.path.basename(args.source))
 
-        print(f"Downloading {args.source}...")
-        if client.download_file(args.source, local_dest):
-            print(f"✓ Downloaded to {local_dest}")
+        # Check if source contains wildcards
+        if '*' in remote_source or '?' in remote_source:
+            # Handle wildcard pattern
+            import fnmatch
+
+            # Extract directory and pattern
+            if '/' in remote_source:
+                parent_dir = os.path.dirname(remote_source)
+                pattern = os.path.basename(remote_source)
+            else:
+                parent_dir = '/'
+                pattern = remote_source
+
+            if args.verbose:
+                print(f"Wildcard pattern detected: {pattern} in {parent_dir}")
+
+            # List files in parent directory
+            files = client.list_files(parent_dir)
+            if not files:
+                print(f"No files found in {parent_dir}")
+                sys.exit(1)
+
+            # Filter files matching pattern
+            matching_files = []
+            for file in files:
+                if file['type'] == 'file' and fnmatch.fnmatch(file['name'], pattern):
+                    matching_files.append(file)
+
+            if not matching_files:
+                print(f"No files matching pattern '{pattern}' in {parent_dir}")
+                sys.exit(1)
+
+            print(f"Found {len(matching_files)} files matching '{pattern}'")
+
+            # Download each matching file
+            downloaded = 0
+            failed = 0
+
+            for file in matching_files:
+                remote_file = f"{parent_dir}/{file['name']}"
+                local_file = os.path.join(local_dest, file['name'])
+
+                if args.verbose:
+                    print(f"\nDownloading: {file['name']}")
+
+                if client.download_file(remote_file, local_file):
+                    downloaded += 1
+                else:
+                    failed += 1
+                    if not args.quiet:
+                        print(f"✗ Failed: {file['name']}")
+
+            print(f"\n✓ Downloaded {downloaded} files")
+            if failed > 0:
+                print(f"✗ Failed: {failed} files")
+                sys.exit(1)
+
         else:
-            print("✗ Download failed")
-            sys.exit(1)
+            # Normal download (single file or directory)
+            print(f"Downloading {remote_source}...")
+
+            # Check if remote source is a directory
+            if client.is_directory(remote_source):
+                # Recursive directory download
+                # Determine local directory name based on cp -r behavior
+                if os.path.exists(local_dest) and os.path.isdir(local_dest):
+                    # Destination exists and is a directory: create subfolder inside
+                    local_target = os.path.join(local_dest, os.path.basename(remote_source.rstrip('/')))
+                else:
+                    # Destination doesn't exist or is a file: use destination as target name
+                    local_target = local_dest
+
+                os.makedirs(local_target, exist_ok=True)
+
+                if args.verbose:
+                    print(f"Downloading directory to: {local_target}")
+
+                downloaded, failed = client.download_recursive(remote_source, local_target, args.quiet)
+                print(f"✓ Downloaded {downloaded} files")
+                if failed > 0:
+                    print(f"✗ Failed: {failed} files")
+                    sys.exit(1)
+            else:
+                # Single file download
+                if os.path.isdir(local_dest):
+                    local_dest = os.path.join(local_dest, os.path.basename(remote_source))
+
+                if client.download_file(remote_path=remote_source, local_path=local_dest):
+                    print(f"✓ Downloaded to {local_dest}")
+                else:
+                    print("✗ Download failed")
+                    sys.exit(1)
 
     elif args.command == 'list':
         print(f"Listing {args.path}:")
