@@ -80,6 +80,4 @@ For any questions or issues regarding the Mainzelliste pseudonymization service,
 *Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
 
----
 
-For more information about available ITCC PedCanPortal services, please refer to the [Services Guide](services-guide.md).
