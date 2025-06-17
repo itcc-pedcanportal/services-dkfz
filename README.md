@@ -43,7 +43,7 @@ For detailed instructions on how to use this service, please refer to the [Mainz
 
 ## Requesting Access
 
-To request access to any of these services, please send an email to:
+To request access to any of these services or contribute code, please send an email to:
 
 **Julius Müller**  
 Email: julius.mueller@dkfz-heidelberg.de
@@ -52,13 +52,6 @@ Please include the following information in your request:
 1. Your name and institution
 2. The service(s) you need access to
 3. The purpose of your access request
-
-## Contributing
-
-If you would like to contribute code to this documentation repository, please contact:
-
-Email: julius.mueller@dkfz-heidelberg.de
-
 
 ---
 

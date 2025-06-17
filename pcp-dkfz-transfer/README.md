@@ -1,21 +1,18 @@
 # PCP-DKFZ Transfer Tool (pcpdt)
 
-A simple, cross-platform command-line tool for uploading, downloading, and sharing files via the PedCanPortal Nextcloud instance.
+A simple command-line tool for transferring files to the PedCanPortal Nextcloud instance. This tool allows collaborators to easily copy data to DKFZ for integration into the initiatives portal.
 
-**Current Version:** 1.3.1
+**Purpose:** This tool is designed for ITCC collaborators to transfer data to DKFZ. It's a straightforward utility that mimics the behavior of standard file copy commands like `cp -r` while handling the authentication and transfer to the Nextcloud server.
+
+**Current Version:** 1.3.3
 
 ## Features
 
-- 📤 **Upload** files and folders to your personal space or shared folders
-- 📥 **Download** files from Nextcloud with resume support
-- 📁 **Access shared folders** for collaboration
-- 👥 **Internal sharing** with specific users (no public links or group sharing)
-- 📊 **Progress tracking** - visual progress bar with speed and ETA
-- 🔄 **Parallel uploads** - upload multiple files simultaneously
-- 🔁 **Retry mechanism** - automatically handles connection resets
-- 🔒 **Secure** - uses HTTPS and app passwords
-- 📦 **Zero dependencies** - uses only Python standard library
-- 🖥️ **Cross-platform** - works on Windows, macOS, and Linux
+- Upload files and folders to the Nextcloud instance (similar to cp -r)
+- Download files from Nextcloud
+- Access the Global shared folder for collaboration
+- Basic file operations: upload, download, list files
+- Works on Windows, macOS, and Linux
 
 ## Shared Folders
 
@@ -117,16 +114,10 @@ Upload entire folder:
 pcpdt upload ./results /Projects/Experiment1/
 ```
 
-Advanced upload options:
+For directory uploads (similar to cp -r):
 ```bash
-# Upload with chunked method (more reliable for unstable connections)
-pcpdt upload --chunk large_file.zip /Global/
-
-# Upload with parallel chunks (faster chunked uploads)
-pcpdt upload --chunk --parallel-chunks 4 large_file.zip /Global/
-
-# Upload directory with parallel file uploads (faster for many small files)
-pcpdt upload -p 8 ./my_folder /Global/
+# Upload a directory and all its contents
+pcpdt upload ./my_folder /Global/
 ```
 
 ### Download Files
@@ -142,10 +133,6 @@ Download from shared folder:
 pcpdt download /Global/shared-data.csv ./
 ```
 
-Downloads include:
-- Progress bar showing download status
-- Automatic resume of interrupted downloads
-- Proper handling of large files
 
 ### List Files
 
@@ -168,62 +155,18 @@ Available permissions: `read`, `write`, `all`
 
 ## Examples
 
-### Example 0: Progress Bar and Performance
+
+### Basic Usage Example
 
 ```bash
-# Upload with progress bar (automatic)
-pcpdt upload large_file.zip /Global/
-# Output:
-# large_file.zip | ██████████░░░░░░░░ | 50.5% | 5.2 MB/s | ETA: 0:01:30
+# Upload data to the shared folder
+pcpdt upload analysis-results.xlsx /Global/
 
-# Download with progress bar (automatic)
-pcpdt download /Global/large_file.zip ./
-# Output:
-# [========================          ] 67,108,864/134,217,728 bytes
+# Download files from the shared folder
+pcpdt download /Global/analysis-results.xlsx ./
 
-# Parallel uploads for better performance
-pcpdt upload -p 4 ./dataset /Global/
-# Output:
-# Using 4 parallel uploads for 20 files...
-```
-
-### Example 1: Collaborate via Shared Folder
-
-```bash
-# Upload data for all team members
-pcpdt upload analysis-results.xlsx /Global/2024-06-Results/
-
-# Team members can download
-pcpdt download /Global/2024-06-Results/analysis-results.xlsx ./
-```
-
-### Example 2: Personal Space Upload
-
-```bash
-# Upload to your personal space
-pcpdt upload patient-data.tar.gz /Documents/cohort-A/
-
-# List files in your personal folder
-pcpdt list /Documents/
-```
-
-### Example 3: Automated Script
-
-```bash
-#!/bin/bash
-# Daily upload to shared folder
-
-DATE=$(date +%Y%m%d)
-REPORT="daily-report-$DATE.pdf"
-
-# Generate report
-generate_report.sh > "$REPORT"
-
-# Upload to Global shared folder
-NEXTCLOUD_TOKEN="user:app-password" pcpdt upload "$REPORT" /Global/reports/
-
-# Clean up
-rm "$REPORT"
+# List files in the shared folder
+pcpdt list /Global/
 ```
 
 ## Important Notes
@@ -255,11 +198,8 @@ rm "$REPORT"
 - Use internal sharing: `pcpdt share file.txt username`
 
 ### Connection issues during upload
-- If uploads fail with "Connection reset by peer" errors:
-  - Use chunked mode: `pcpdt upload --chunk large_file.zip /Global/`
-  - For faster chunked uploads: `pcpdt upload --chunk --parallel-chunks 4 large_file.zip /Global/`
-- The tool includes an automatic retry mechanism (up to 20 retries with exponential backoff)
-- Use verbose mode to see detailed error information: `pcpdt -v upload file.txt /Global/`
+- If uploads fail, try using verbose mode for more information: `pcpdt -v upload file.txt /Global/`
+- For large files or unstable connections, use the chunked mode: `pcpdt upload --chunk large_file.zip /Global/`
 
 ## Platform Notes
 

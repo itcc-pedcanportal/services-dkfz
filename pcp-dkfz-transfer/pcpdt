@@ -26,7 +26,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Configuration
 NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.eu"
-VERSION = "1.3.1"
+VERSION = "1.3.3"
 
 # Upload configuration - smaller chunks to avoid proxy timeouts
 UPLOAD_CHUNK_SIZE = 2 * 1024 * 1024  # 2MB chunks to stay under proxy limits
@@ -56,7 +56,6 @@ class NextcloudClient:
         self.verbose = verbose
         self.webdav_url = f"{NEXTCLOUD_URL}/remote.php/dav/files"
         self.ocs_url = f"{NEXTCLOUD_URL}/ocs/v2.php/apps/files_sharing/api/v1"
-        self.upload_session = {}  # Track upload sessions
 
     def _make_request(self, url, method='GET', data=None, headers=None, timeout=60):
         """Make HTTP request with authentication"""
@@ -100,6 +99,45 @@ class NextcloudClient:
         except:
             return False
 
+    def create_directory(self, remote_path):
+        """Create a directory"""
+        # Normalize path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        # ALL paths go through the user's files endpoint
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        if self.verbose:
+            print(f"Creating directory: {remote_path} -> {url}")
+
+        try:
+            _, code, _ = self._make_request(url, method='MKCOL', timeout=10)
+            if self.verbose:
+                print(f"  Result: {code}")
+            return code in [201, 405]  # 405 means already exists
+        except Exception as e:
+            if self.verbose:
+                print(f"Failed to create directory {remote_path}: {e}")
+            return False
+
+    def create_parent_directories(self, path):
+        """Create all parent directories for a given path"""
+        # Normalize path
+        if not path.startswith('/'):
+            path = '/' + path
+
+        # Split the path and create each directory level
+        parts = path.strip('/').split('/')
+        current_path = ''
+
+        for part in parts:
+            if part:  # Skip empty parts
+                current_path += '/' + part
+                if not self.create_directory(current_path):
+                    if self.verbose:
+                        print(f"Warning: Could not create directory {current_path}")
+
     def upload_file(self, local_path, remote_path, max_retries=MAX_RETRIES, use_chunks=False, parallel_chunks=1):
         """Upload file - defaults to streaming, optionally uses chunks"""
         if use_chunks:
@@ -125,10 +163,11 @@ class NextcloudClient:
         # Calculate chunks
         total_chunks = (file_size + UPLOAD_CHUNK_SIZE - 1) // UPLOAD_CHUNK_SIZE
 
-        print(
-            f"Uploading {filename} ({file_size:,} bytes) in {total_chunks} chunks of {UPLOAD_CHUNK_SIZE // 1024 // 1024}MB each...")
-        if parallel_chunks > 1 and total_chunks > 1:
-            print(f"Using {min(parallel_chunks, total_chunks)} parallel connections...")
+        if self.verbose:
+            print(
+                f"Uploading {filename} ({file_size:,} bytes) in {total_chunks} chunks of {UPLOAD_CHUNK_SIZE // 1024 // 1024}MB each...")
+            if parallel_chunks > 1 and total_chunks > 1:
+                print(f"Using {min(parallel_chunks, total_chunks)} parallel connections...")
 
         start_time = datetime.now()
         chunk_status = {}  # Track status of each chunk
@@ -256,7 +295,8 @@ class NextcloudClient:
                 update_progress()
 
         # Assemble chunks into final file
-        print(f"\nAssembling {total_chunks} chunks...")
+        if self.verbose:
+            print(f"\nAssembling {total_chunks} chunks...")
         if not self._assemble_chunks(remote_path, session_id, total_chunks):
             print("Failed to assemble chunks")
             return False
@@ -270,10 +310,6 @@ class NextcloudClient:
 
     def _assemble_chunks(self, remote_path, session_id, total_chunks):
         """Assemble uploaded chunks into final file"""
-        # This is a simplified version - in reality, you'd need server-side support
-        # For now, we'll just rename the first chunk to the final filename
-        # and delete the others (this only works for single-chunk files)
-
         if total_chunks == 1:
             # Simple case - just rename the chunk
             chunk_path = f"{remote_path}.chunk000000.{session_id}"
@@ -292,27 +328,12 @@ class NextcloudClient:
                 return False
         else:
             # For multiple chunks, we'd need server-side chunk assembly
-            # This is a limitation of pure WebDAV
             print("\nNote: Multi-chunk assembly requires server-side support.")
             print("The chunks have been uploaded but need manual assembly.")
             return True
 
-    def _append_chunk(self, main_file, chunk_file, position):
-        """Append chunk to main file using COPY with position headers"""
-        # Delete the chunk file after appending
-        chunk_url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(chunk_file)}"
-
-        try:
-            # Simply move the chunk file to a processed name
-            # In a real implementation, you'd use server-side copy/append
-            # For now, we'll just delete the chunk file
-            self._make_request(chunk_url, method='DELETE', timeout=10)
-        except:
-            pass
-
     def _cleanup_temp_files(self, remote_path, session_id):
         """Clean up temporary chunk files"""
-        # List and delete any remaining chunk files
         try:
             directory = os.path.dirname(remote_path)
             files = self.list_files(directory)
@@ -328,6 +349,10 @@ class NextcloudClient:
 
     def _get_remote_file_size(self, remote_path):
         """Get size of remote file if it exists"""
+        # Normalize path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
         url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
 
         # Use PROPFIND to get file properties
@@ -358,7 +383,7 @@ class NextcloudClient:
         return 0
 
     def upload_file_stream(self, local_path, remote_path, max_retries=MAX_RETRIES):
-        """Alternative: Upload using a streaming approach with smaller writes"""
+        """Upload using a streaming approach"""
         if not remote_path.startswith('/'):
             remote_path = '/' + remote_path
 
@@ -369,7 +394,8 @@ class NextcloudClient:
         file_size = os.path.getsize(local_path)
         filename = os.path.basename(local_path)
 
-        print(f"Uploading {filename} ({file_size:,} bytes) using streaming method...")
+        if self.verbose:
+            print(f"Uploading {filename} ({file_size:,} bytes) to {remote_path}")
 
         retries = 0
         uploaded = 0
@@ -461,11 +487,21 @@ class NextcloudClient:
 
                 # Get response
                 response = conn.getresponse()
+                response_data = response.read()
+
                 if response.status in [201, 204]:
                     sys.stdout.write(f"\r{filename} | {'█' * 20} | 100.0% | Complete" + " " * 30 + "\n")
                     sys.stdout.flush()
                     return True
+                elif response.status == 404:
+                    print(f"\nUpload failed: Directory not found. Make sure parent directories exist.")
+                    return False
+                elif response.status == 409:
+                    print(f"\nUpload failed: Parent directory does not exist.")
+                    return False
                 else:
+                    if self.verbose:
+                        print(f"\nUpload failed with status {response.status}: {response_data}")
                     raise Exception(f"Upload failed with status {response.status}")
 
             except (ConnectionResetError, BrokenPipeError, ConnectionAbortedError) as e:
@@ -480,33 +516,23 @@ class NextcloudClient:
                     return False
             except Exception as e:
                 print(f"\nUpload error: {e}")
+                if "404" in str(e) or "409" in str(e):
+                    print("This usually means the parent directory doesn't exist on the server.")
                 return False
 
         return False
-
-    def create_directory(self, remote_path):
-        """Create a directory"""
-        if remote_path.startswith('/Global/') or remote_path == '/Global':
-            url = f"{self.webdav_url}/{self.username}/{urllib.parse.quote(remote_path.lstrip('/'))}"
-        else:
-            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
-
-        try:
-            _, code, _ = self._make_request(url, method='MKCOL', timeout=10)
-            return code in [201, 405]  # 405 means already exists
-        except:
-            return False
 
     def download_file(self, remote_path, local_path):
         """Download a file with resume support"""
         if remote_path.startswith('http'):
             print("Error: Public share links are switched off in this Nextcloud instance.")
             return False
-        else:
-            if remote_path.startswith('/Global/'):
-                url = f"{self.webdav_url}/{self.username}/{urllib.parse.quote(remote_path.lstrip('/'))}"
-            else:
-                url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        # Normalize path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
 
         try:
             # Check if partial download exists
@@ -566,10 +592,11 @@ class NextcloudClient:
 
     def list_files(self, remote_path):
         """List files in a directory"""
-        if remote_path.startswith('/Global/') or remote_path == '/Global':
-            url = f"{self.webdav_url}/{self.username}/{urllib.parse.quote(remote_path.lstrip('/'))}"
-        else:
-            url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+        # Normalize path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
 
         xml_request = '''<?xml version="1.0" encoding="UTF-8"?>
         <d:propfind xmlns:d="DAV:">
@@ -672,11 +699,13 @@ def get_credentials(args):
         return username, password
 
 
-def upload_recursive(client, local_path, remote_base, quiet=False, parallel=MAX_PARALLEL_UPLOADS, use_chunks=False):
+def upload_recursive(client, local_path, remote_base, quiet=False, parallel=MAX_PARALLEL_UPLOADS, use_chunks=False,
+                     skip_hidden=True, verbose=False):
     """Upload directory recursively with parallel uploads"""
     local_path = Path(local_path)
     uploaded = 0
     failed = 0
+    skipped = 0
 
     upload_lock = threading.Lock()
 
@@ -686,54 +715,150 @@ def upload_recursive(client, local_path, remote_base, quiet=False, parallel=MAX_
         with upload_lock:
             if success:
                 uploaded += 1
+                if verbose:
+                    print(f"✓ Uploaded: {local_file.name}")
             else:
                 failed += 1
+                if not quiet:
+                    print(f"✗ Failed: {local_file.name}")
         return success
 
-    # Create remote directory
-    remote_dir = f"{remote_base}/{local_path.name}"
-    client.create_directory(remote_dir)
+    # Ensure remote base path is properly formatted
+    if not remote_base.endswith('/'):
+        remote_base = remote_base + '/'
 
-    # Collect all files and directories
+    # First, ensure the base path exists by creating all parent directories
+    base_parts = remote_base.rstrip('/').split('/')
+    current_path = ''
+    for part in base_parts:
+        if part:  # Skip empty parts
+            current_path += '/' + part
+            if verbose:
+                print(f"Ensuring directory exists: {current_path}")
+            if not client.create_directory(current_path):
+                print(f"ERROR: Could not create directory {current_path}")
+                print("Make sure you have write permissions to the parent directory.")
+                return 0, 1  # Fail fast
+
+    # Create the base directory with the source folder name
+    remote_base_dir = f"{remote_base}{local_path.name}"
+    if verbose:
+        print(f"Creating target directory: {remote_base_dir}")
+    if not client.create_directory(remote_base_dir):
+        print(f"ERROR: Could not create base directory {remote_base_dir}")
+        print("Make sure you have write permissions to the parent directory.")
+        return 0, 1  # Fail fast
+
+    # Collect all files and directories with their relative paths
     all_dirs = []
     all_files = []
 
     for root, dirs, files in os.walk(local_path):
-        for dir_name in dirs:
-            local_dir = Path(root) / dir_name
-            rel_path = local_dir.relative_to(local_path.parent)
-            remote_path = f"{remote_base}/{rel_path.as_posix()}"
-            all_dirs.append(remote_path)
+        # Filter out hidden directories if requested
+        if skip_hidden:
+            # Remove hidden directories from the walk
+            dirs[:] = [d for d in dirs if not d.startswith('.')]
+            # Skip __MACOSX directory
+            dirs[:] = [d for d in dirs if d != '__MACOSX']
 
+        # Calculate relative path from the source directory
+        rel_dir = Path(root).relative_to(local_path.parent)
+        remote_dir = f"{remote_base}{rel_dir.as_posix()}"
+
+        # Add subdirectories
+        for dir_name in dirs:
+            sub_dir_path = f"{remote_dir}/{dir_name}"
+            all_dirs.append(sub_dir_path)
+
+        # Add files
         for file_name in files:
+            # Skip hidden files if requested
+            if skip_hidden and (file_name.startswith('.') or '._' in file_name):
+                skipped += 1
+                if verbose:
+                    print(f"⊘ Skipping hidden/system file: {file_name}")
+                continue
+
             local_file = Path(root) / file_name
-            rel_path = local_file.relative_to(local_path.parent)
-            remote_file = f"{remote_base}/{rel_path.as_posix()}"
+            remote_file = f"{remote_dir}/{file_name}"
             all_files.append((local_file, remote_file))
 
-    # Create all directories first
+    # Create all directories first (in order to handle nested structures)
+    if all_dirs:
+        if verbose:
+            print(f"\nCreating {len(all_dirs)} subdirectories...")
+
+    # Sort directories by depth to ensure parent directories are created first
+    all_dirs.sort(key=lambda x: x.count('/'))
+
     for remote_path in all_dirs:
-        client.create_directory(remote_path)
+        if verbose:
+            print(f"  Creating: {remote_path}")
+        if not client.create_directory(remote_path):
+            print(f"  ERROR: Could not create directory {remote_path}")
+            # Fail fast on directory creation error
+            return uploaded, len(all_files) - uploaded
 
     # Upload files
-    if parallel > 1 and len(all_files) > 1:
+    if len(all_files) == 0:
         if not quiet:
-            print(f"Using {parallel} parallel uploads for {len(all_files)} files...")
+            print("No files to upload (all files may have been skipped)")
+        return 0, 0
+
+    if verbose:
+        print(f"\nUploading {len(all_files)} files...")
+        if skipped > 0:
+            print(f"(Skipped {skipped} hidden/system files)")
+
+    # Use sequential upload for better error handling
+    if parallel == 1 or len(all_files) == 1:
+        for local_file, remote_file in all_files:
+            if not upload_file_task(local_file, remote_file):
+                # Stop on first failure
+                print(f"\nSTOPPING: Upload failed for {local_file}")
+                return uploaded, len(all_files) - uploaded
+    else:
+        # Parallel upload with early termination on failure
+        if verbose:
+            print(f"Using {min(parallel, len(all_files))} parallel uploads...")
 
         with ThreadPoolExecutor(max_workers=parallel) as executor:
-            futures = {
-                executor.submit(upload_file_task, local_file, remote_file): (local_file, remote_file)
-                for local_file, remote_file in all_files
-            }
+            # Submit initial batch
+            futures = {}
+            for local_file, remote_file in all_files[:parallel]:
+                future = executor.submit(upload_file_task, local_file, remote_file)
+                futures[future] = (local_file, remote_file)
 
-            for future in as_completed(futures):
-                try:
-                    future.result()
-                except Exception as e:
-                    print(f"\nError uploading {futures[future][0]}: {e}")
-    else:
-        for local_file, remote_file in all_files:
-            upload_file_task(local_file, remote_file)
+            file_index = parallel
+            stop_flag = False
+
+            # Process results as they complete
+            while futures and not stop_flag:
+                for future in as_completed(futures):
+                    local_file, remote_file = futures.pop(future)
+
+                    try:
+                        success = future.result()
+                        if not success:
+                            print(f"\nSTOPPING: Upload failed for {local_file}")
+                            stop_flag = True
+                            # Cancel pending futures
+                            for f in futures:
+                                f.cancel()
+                            break
+                    except Exception as e:
+                        print(f"\nError uploading {local_file}: {e}")
+                        with upload_lock:
+                            failed += 1
+                        stop_flag = True
+                        break
+
+                    # Submit next file if any and we're not stopping
+                    if file_index < len(all_files) and not stop_flag:
+                        local_file, remote_file = all_files[file_index]
+                        future = executor.submit(upload_file_task, local_file, remote_file)
+                        futures[future] = (local_file, remote_file)
+                        file_index += 1
 
     return uploaded, failed
 
@@ -755,6 +880,9 @@ Examples:
 
   # Upload directory with 4 parallel file uploads
   %(prog)s upload -p 4 my_folder /Documents/
+
+  # Upload directory including hidden files
+  %(prog)s upload --no-skip-hidden my_folder /Documents/
 
   # Download file  
   %(prog)s download /Documents/report.pdf ./
@@ -778,7 +906,8 @@ Upload Methods:
   - -p N: Upload N files in parallel (for directories)
 
 Note: If uploads fail due to connection resets, use --chunk mode or ask your
-admin to increase proxy timeout settings.
+admin to increase proxy timeout settings. Hidden files (starting with .) are
+skipped by default; use --no-skip-hidden to include them.
         """
     )
 
@@ -801,6 +930,8 @@ admin to increase proxy timeout settings.
                                help='Number of parallel chunk uploads when using --chunk (default: 1)')
     upload_parser.add_argument('--stream', action='store_true',
                                help='Force streaming method (deprecated, this is now the default)')
+    upload_parser.add_argument('--no-skip-hidden', action='store_true',
+                               help='Include hidden files and directories (starting with .)')
 
     # Download command
     download_parser = subparsers.add_parser('download', help='Download files')
@@ -846,6 +977,9 @@ admin to increase proxy timeout settings.
         print("\nPARALLEL OPTIONS:")
         print("- -p N: Upload N different files simultaneously (for directories)")
         print("- --parallel-chunks N: Upload N chunks of same file simultaneously")
+        print("\nOTHER OPTIONS:")
+        print("- --no-skip-hidden: Include hidden files and directories (starting with .)")
+        print("  By default, hidden files like .DS_Store are skipped")
         print("\nTROUBLESHOOTING CONNECTION ISSUES:")
         print("- If uploads fail after ~3-4MB, use --chunk mode")
         print("- For faster chunked uploads: --chunk --parallel-chunks 4")
@@ -859,6 +993,7 @@ admin to increase proxy timeout settings.
 
     # Test connection
     if args.verbose:
+        print(f"pcpdt version {VERSION}")
         print("Testing connection... ", end='', flush=True)
 
     if not client.test_connection():
@@ -877,13 +1012,21 @@ admin to increase proxy timeout settings.
             sys.exit(1)
 
         if args.destination.startswith('/Global'):
-            print(f"Uploading to Global shared folder")
-            print(f"Access: {SHARED_FOLDERS['global']['access']}")
+            if args.verbose:
+                print(f"Uploading to Global shared folder")
+                print(f"Access: {SHARED_FOLDERS['global']['access']}")
 
         if source.is_file():
             # Choose upload method
-            if args.chunk:
+            if args.verbose and args.chunk:
                 print("Using chunked upload method (robust mode)...")
+
+            # Ensure parent directories exist
+            parent_dir = os.path.dirname(args.destination.rstrip('/'))
+            if parent_dir and parent_dir != '/':
+                if args.verbose:
+                    print(f"Ensuring parent directory exists: {parent_dir}")
+                client.create_parent_directories(parent_dir)
 
             if client.upload_file(str(source), args.destination,
                                   use_chunks=args.chunk,
@@ -891,18 +1034,32 @@ admin to increase proxy timeout settings.
                 if not args.quiet:
                     print(f"Uploaded to: {args.destination}")
             else:
-                print("\nUpload failed. If you're experiencing connection issues, try:")
-                print("1. Use chunked mode: pcpdt upload --chunk yourfile.bin /Global/")
-                print("2. For faster chunked uploads: pcpdt upload --chunk --parallel-chunks 4 yourfile.bin /Global/")
-                print("3. Ask your admin to check proxy timeout settings")
+                print("\nUpload failed. Common issues:")
+                print("1. Parent directory doesn't exist - check the destination path")
+                print("2. Connection timeout - use chunked mode: pcpdt upload --chunk yourfile.bin /Global/")
+                print("3. For faster chunked uploads: pcpdt upload --chunk --parallel-chunks 4 yourfile.bin /Global/")
+                print("4. Ask your admin to check proxy timeout settings")
                 sys.exit(1)
 
         elif source.is_dir():
-            print(f"Uploading directory {source.name}...")
-            if args.chunk:
-                print("Using chunked upload method for all files...")
-            uploaded, failed = upload_recursive(client, str(source), args.destination,
-                                                args.quiet, args.parallel, args.chunk)
+            if args.verbose:
+                print(f"Uploading directory {source.name}...")
+                if args.chunk:
+                    print("Using chunked upload method for all files...")
+
+            # Ensure destination doesn't have trailing slash for consistency
+            destination = args.destination.rstrip('/')
+
+            # Debug: show what we're about to do
+            if args.verbose:
+                print(f"Source: {source}")
+                print(f"Destination: {destination}")
+                print(f"Skip hidden files: {not getattr(args, 'no_skip_hidden', False)}")
+
+            uploaded, failed = upload_recursive(client, str(source), destination,
+                                                args.quiet, args.parallel, args.chunk,
+                                                skip_hidden=not getattr(args, 'no_skip_hidden', False),
+                                                verbose=args.verbose)
             print(f"\n✓ Uploaded {uploaded} files")
             if failed > 0:
                 print(f"✗ Failed: {failed} files")
