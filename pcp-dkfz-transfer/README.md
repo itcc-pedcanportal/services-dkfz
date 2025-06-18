@@ -4,7 +4,7 @@ A simple command-line tool for transferring files to the PedCanPortal Nextcloud 
 
 **Purpose:** This tool is designed for ITCC collaborators to transfer data to DKFZ. It's a straightforward utility that mimics the behavior of standard file copy commands like `cp -r` while handling the authentication and transfer to the Nextcloud server.
 
-**Current Version:** 1.3.3
+**Current Version:** 1.0.0
 
 ## Features
 
