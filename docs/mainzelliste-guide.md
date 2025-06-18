@@ -50,8 +50,6 @@ SITE001-Sample2
 SITE001-Sample3
 ```
 
-**Important:** Using the site prefix is crucial to prevent ID collisions between different institutions.
-
 ## Generating ITCC Sample IDs
 
 Once you have prepared your CSV file and accessed the Mainzelliste service:
@@ -63,7 +61,7 @@ Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 2. Click on the "Choose File" button and select your prepared CSV file
 
-3. Click on the "Pseudonymize" button to generate ITCC sample IDs
+3. Click on the "Pseudonymize" button to generate ITCC PedCanPortal **Patient IDs**
 
 4. The system will process your file and generate unique 8-character ITCC pseudonyms for each of your local sample IDs
 
