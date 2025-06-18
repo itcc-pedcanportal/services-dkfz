@@ -1,6 +1,7 @@
 # ITCC PedCanPortal Mainzelliste Pseudonymization Guide
 
-This guide explains how to access and use the centralized pseudonymization service (Mainzelliste) for generating unified ITCC sample IDs across the consortium.
+This guide explains how to access and use the centralized pseudonymization service (Mainzelliste) for generating unified 
+ITCC Patient IDs across the consortium.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -12,7 +13,9 @@ This guide explains how to access and use the centralized pseudonymization servi
 
 ## Overview
 
-The Mainzelliste service functions as a double pseudonym generator which enables secure data sharing across the ITCC consortium with a unified sample_id. This centralized approach ensures that all samples can be consistently identified across different datasets and institutions.
+The Mainzelliste service functions as a double pseudonym generator which enables secure data sharing across the ITCC 
+consortium with a unified patient_id. This centralized approach ensures that all patients can be consistently identified 
+across different datasets and institutions.
 
 The service is based on:
 - Backend: [Mainzelliste](https://bitbucket.org/medicalinformatics/mainzelliste/src/master/)
@@ -32,15 +35,16 @@ The Mainzelliste service is now directly accessible at:
 https://pseudonymization.pedcanportal.eu/
 ```
 
-To access the service, simply open a browser and navigate to the URL above. You will need to log in with the credentials provided to you after requesting access.
+To access the service, simply open a browser and navigate to the URL above. You will need to log in with the credentials 
+provided to you after requesting access.
 
 ## Preparing Your Data
 
-To generate ITCC sample IDs, you need to prepare a CSV file with your local sample identifiers:
+To generate ITCC Patient IDs, you need to prepare a CSV file with your local patient identifiers:
 
 1. Create a CSV file with a single column named `clinicExtId`
-2. Add your local sample IDs to this column
-3. To avoid collisions with IDs from other institutions, prefix each local sample ID with your site ID
+2. Add your local Patient IDs to this column
+3. To avoid collisions with IDs from other institutions, prefix each local Patient ID with your site ID
 
 Example CSV format:
 ```
@@ -50,7 +54,7 @@ SITE001-Sample2
 SITE001-Sample3
 ```
 
-## Generating ITCC Sample IDs
+## Generating ITCC Patient IDs
 
 Once you have prepared your CSV file and accessed the Mainzelliste service:
 
@@ -61,15 +65,15 @@ Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 2. Click on the "Choose File" button and select your prepared CSV file
 
-3. Click on the "Pseudonymize" button to generate ITCC PedCanPortal **Patient IDs**
+3. Click on the "Pseudonymize" button to generate ITCC PedCanPortal Patient IDs
 
-4. The system will process your file and generate unique 8-character ITCC pseudonyms for each of your local sample IDs
+4. The system will process your file and generate unique 8-character ITCC pseudonyms for each of your local Patient IDs
 
 5. Download the resulting mapped IDs file, which will contain both your original IDs and the corresponding ITCC pseudonyms
 
 ![Screenshot of the Bulk Pseudonymization interface showing the file upload and pseudonymization process](../resources/mainzelliste_bulkp.png)
 
-These generated ITCC pseudonyms should be used across all datasets when referring to these samples within the consortium.
+These generated ITCC pseudonyms should be used across all datasets when referring to these patients within the consortium.
 
 ## Contact Information
 
