@@ -155,7 +155,7 @@ pcpdt download /Global/shared-data.csv ./
 
 List files in a directory:
 ```bash
-pcpdt list /Documents/
+pcpdt list
 pcpdt list /Global/
 ```
 
