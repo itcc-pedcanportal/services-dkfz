@@ -33,7 +33,7 @@ For detailed instructions on how to use this service, please refer to the [PCP-D
 
 This is the PedCanPortal internal cBioPortal instance for exploring and analyzing cancer genomics data sets.
 
-### Pseudonymization Service
+### Pseudonymization Service and Sample ID Generation
 
 **URL**: [https://pseudonymization.pedcanportal.eu/](https://pseudonymization.pedcanportal.eu/)
 
