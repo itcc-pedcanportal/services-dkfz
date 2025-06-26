@@ -37,9 +37,9 @@ This is the PedCanPortal internal cBioPortal instance for exploring and analyzin
 
 **URL**: [https://pseudonymization.pedcanportal.eu/](https://pseudonymization.pedcanportal.eu/)
 
-This is the pseudonymization service (Mainzelliste) used for generating unified ITCC sample IDs across the consortium.
+This is the pseudonymization service (Mainzelliste) used for generating unified ITCC patient and sample IDs across the consortium. The service generates 8-character pseudonyms that are then incorporated into standardized patient and sample identifiers.
 
-For detailed instructions on how to use this service, please refer to the [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md).
+For detailed instructions on how to use this service, including how to create standardized ITCC-PedCanPortal patient and sample IDs, please refer to the [Mainzelliste Pseudonymization Guide](docs/mainzelliste-guide.md).
 
 ## Requesting Access
 
