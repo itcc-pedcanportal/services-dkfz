@@ -8,7 +8,7 @@ ITCC Patient IDs across the consortium.
 - [Prerequisites](#prerequisites)
 - [Accessing the Mainzelliste Service](#accessing-the-mainzelliste-service)
 - [Preparing Your Data](#preparing-your-data)
-- [Generating ITCC Sample IDs](#generating-itcc-sample-ids)
+- [Generating ITCC Patient IDs and Sample IDs](#generating-itcc-patient-ids-and-sample-ids)
 - [Contact Information](#contact-information)
 
 ## Overview
@@ -54,9 +54,9 @@ SITE001-Sample2
 SITE001-Sample3
 ```
 
-## Generating ITCC Patient IDs
+## Generating ITCC Patient IDs and Sample IDs
 
-Once you have prepared your CSV file and accessed the Mainzelliste service:
+The generation of standardized ITCC IDs is a central aspect of the PedCanPortal data integration strategy. Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 1. Navigate to the "Bulk Pseudonymization" page at:
    ```
@@ -65,15 +65,36 @@ Once you have prepared your CSV file and accessed the Mainzelliste service:
 
 2. Click on the "Choose File" button and select your prepared CSV file
 
-3. Click on the "Pseudonymize" button to generate ITCC PedCanPortal Patient IDs
+3. Click on the "Pseudonymize" button to generate ITCC PedCanPortal pseudonyms
 
-4. The system will process your file and generate unique 8-character ITCC pseudonyms for each of your local Patient IDs
+4. The system will process your file and generate unique 8-character pseudonyms for each of your local Patient IDs
 
 5. Download the resulting mapped IDs file, which will contain both your original IDs and the corresponding ITCC pseudonyms
 
 ![Screenshot of the Bulk Pseudonymization interface showing the file upload and pseudonymization process](../resources/mainzelliste_bulkp.png)
 
-These generated ITCC pseudonyms should be used across all datasets when referring to these patients within the consortium.
+### Creating ITCC-PedCanPortal Patient and Sample IDs
+
+To ensure consistency across the consortium, follow these rules for creating standardized IDs:
+
+1. **Patient IDs**: Prefix the 8-character pseudonym with "P" 
+   - Example: If the pseudonym is "AB12CD34", the Patient ID would be "PAB12CD34"
+
+2. **Sample IDs**: Take the Patient ID, add an underscore "_", and append a serial number (1, 2, 3...)
+   - Example: For patient "PAB12CD34" with multiple samples:
+     - First sample: "PAB12CD34_1"
+     - Second sample: "PAB12CD34_2"
+     - Third sample: "PAB12CD34_3"
+
+These standardized IDs should be used consistently across all datasets when referring to patients and samples within the consortium.
+
+### Traceability
+
+For authorized users, tracing back to original identifiers is possible:
+- Patient IDs can be traced through https://pseudonymization.pedcanportal.eu
+- Sample IDs can be traced through the associated metadata in your datasets
+
+This system ensures both data privacy and the ability to connect related records across the ITCC consortium.
 
 ## Contact Information
 
@@ -81,5 +102,3 @@ For any questions or issues regarding the Mainzelliste pseudonymization service,
 
 *Julius Müller*  
 Email: julius.mueller@dkfz-heidelberg.de
-
-
