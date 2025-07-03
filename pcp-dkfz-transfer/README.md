@@ -116,7 +116,7 @@ pcpdt info
 
 Upload to your personal space:
 ```bash
-pcpdt upload report.pdf 
+pcpdt upload report.pdf /
 pcpdt upload data.csv /Projects/Analysis/
 ```
 
