@@ -232,6 +232,6 @@ python pcpdt upload C:\data\file.txt /Documents/
 
 ## Support
 
-- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/services-dkfz)
+- Tool issues: Create issue on [GitHub](https://github.com/itcc-pedcanportal/services-dkfz/issues)
 - Access problems: Contact [julius.mueller@dkfz-heidelberg.de](mailto:julius.mueller@dkfz-heidelberg.de)
 - Server: https://cbioportal-upload.pedcanportal.eu
