@@ -25,7 +25,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Configuration
 NEXTCLOUD_URL = "https://cbioportal-upload.pedcanportal.eu"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 # Upload configuration - smaller chunks to avoid proxy timeouts
 UPLOAD_CHUNK_SIZE = 2 * 1024 * 1024  # 2MB chunks to stay under proxy limits
@@ -803,6 +803,74 @@ class NextcloudClient:
             pass
         return False
 
+    def rename_file(self, old_path, new_path):
+        """Rename/move a file or directory"""
+        # Normalize paths
+        if not old_path.startswith('/'):
+            old_path = '/' + old_path
+        if not new_path.startswith('/'):
+            new_path = '/' + new_path
+
+        source_url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(old_path)}"
+        dest_url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(new_path)}"
+
+        headers = {
+            'Destination': dest_url,
+            'Overwrite': 'T'
+        }
+
+        if self.verbose:
+            print(f"Renaming {old_path} to {new_path}")
+
+        try:
+            _, code, _ = self._make_request(source_url, method='MOVE', headers=headers, timeout=30)
+            if code in [201, 204]:
+                return True
+            elif code == 404:
+                if self.verbose:
+                    print(f"Source file not found: {old_path}")
+                return False
+            elif code == 409:
+                if self.verbose:
+                    print(f"Destination directory does not exist for: {new_path}")
+                return False
+            else:
+                if self.verbose:
+                    print(f"Rename failed with code {code}")
+                return False
+        except Exception as e:
+            if self.verbose:
+                print(f"Rename failed: {e}")
+            return False
+
+    def delete_file(self, remote_path):
+        """Delete a file or directory"""
+        # Normalize path
+        if not remote_path.startswith('/'):
+            remote_path = '/' + remote_path
+
+        url = f"{self.webdav_url}/{self.username}{urllib.parse.quote(remote_path)}"
+
+        if self.verbose:
+            print(f"Deleting {remote_path}")
+
+        try:
+            _, code, _ = self._make_request(url, method='DELETE', timeout=30)
+            if code == 204:
+                return True
+            elif code == 404:
+                if self.verbose:
+                    print(f"File not found: {remote_path}")
+                return False
+            else:
+                if self.verbose:
+                    print(f"Delete failed with code {code}")
+                return False
+        except Exception as e:
+            if self.verbose:
+                print(f"Delete failed: {e}")
+            return False
+
 
 def get_credentials(args):
     """Get credentials from environment or prompt"""
@@ -1022,6 +1090,14 @@ Examples:
   # Share with specific user
   %(prog)s share /Documents/report.pdf colleague_username
 
+  # Rename/move file or directory
+  %(prog)s rename /Documents/old_name.pdf /Documents/new_name.pdf
+  %(prog)s rename /Documents/old_folder /Documents/new_folder
+
+  # Delete file or directory
+  %(prog)s delete /Documents/unwanted_file.pdf
+  %(prog)s delete /Documents/unwanted_folder --confirm
+
 Environment:
   NEXTCLOUD_TOKEN=username:your-app-password
 
@@ -1084,6 +1160,16 @@ skipped by default; use --no-skip-hidden to include them.
     share_parser.add_argument('target', help='Username to share with')
     share_parser.add_argument('-p', '--permissions', choices=['read', 'write', 'all'],
                               default='read', help='Share permissions')
+
+    # Rename command
+    rename_parser = subparsers.add_parser('rename', help='Rename or move files and directories')
+    rename_parser.add_argument('source', help='Current file or directory path')
+    rename_parser.add_argument('destination', help='New file or directory path')
+
+    # Delete command
+    delete_parser = subparsers.add_parser('delete', help='Delete files or directories')
+    delete_parser.add_argument('path', help='File or directory path to delete')
+    delete_parser.add_argument('--confirm', action='store_true', help='Skip confirmation prompt')
 
     # Info command
     info_parser = subparsers.add_parser('info', help='Show information about shared folders')
@@ -1317,6 +1403,35 @@ skipped by default; use --no-skip-hidden to include them.
             print(f"✓ Shared {args.path} with {args.target} ({args.permissions} access)")
         else:
             print("✗ Failed to create share")
+            sys.exit(1)
+
+    elif args.command == 'rename':
+        if client.rename_file(args.source, args.destination):
+            print(f"✓ Renamed {args.source} to {args.destination}")
+        else:
+            print("✗ Failed to rename")
+            sys.exit(1)
+
+    elif args.command == 'delete':
+        # Safety check and confirmation
+        if not args.confirm:
+            # Check if the path exists and get some info about it
+            is_dir = client.is_directory(args.path)
+            item_type = "directory" if is_dir else "file"
+            
+            print(f"Are you sure you want to delete the {item_type} '{args.path}'?")
+            if is_dir:
+                print("WARNING: This will delete the directory and all its contents!")
+            
+            confirmation = input("Type 'yes' to confirm: ")
+            if confirmation.lower() != 'yes':
+                print("Delete cancelled")
+                return
+        
+        if client.delete_file(args.path):
+            print(f"✓ Deleted {args.path}")
+        else:
+            print("✗ Failed to delete")
             sys.exit(1)
 
 

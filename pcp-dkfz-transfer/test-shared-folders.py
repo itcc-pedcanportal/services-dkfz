@@ -46,13 +46,13 @@ def test_shared_folders():
     # Test 2: Upload to shared folder
     print("Test 2: Testing upload to shared folder...")
 
-    # Create a test file
+    # Create a raw file
     with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
         test_content = f"Test upload at {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
         f.write(test_content)
         test_file = f.name
 
-    test_filename = f"test-{os.getpid()}.txt"
+    test_filename = f"raw-{os.getpid()}.txt"
 
     # Try upload to Global folder
     success, stdout, stderr = run_command(
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # Check if pcpdt exists
     if not os.path.exists('./pcpdt'):
         print("Error: pcpdt not found in current directory")
-        print("Please run this test from the pcp-dkfz-transfer directory")
+        print("Please run this raw from the pcp-dkfz-transfer directory")
         sys.exit(1)
 
     # Run tests

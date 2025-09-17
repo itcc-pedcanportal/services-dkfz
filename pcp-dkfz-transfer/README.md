@@ -4,14 +4,38 @@ A simple command-line tool for transferring files to the PedCanPortal Nextcloud 
 
 **Purpose:** This tool is designed for ITCC collaborators to transfer data to DKFZ. It's a straightforward utility that mimics the behavior of standard file copy commands like `cp -r` while handling the authentication and transfer to the Nextcloud server.
 
-**Current Version:** 1.0.0
+**Current Version:** 1.1.0
+
+## Changelog
+
+### Version 1.1.0 (Latest)
+**New Features:**
+- **File/Directory Renaming**: Added `rename` command to rename or move files and directories
+- **File/Directory Deletion**: Added `delete` command to safely delete files and directories with confirmation prompts
+- **Enhanced Safety**: Delete operations include confirmation prompts (can be bypassed with `--confirm` flag)
+- **Improved Help**: Updated help documentation with examples for new commands
+
+**Commands Added:**
+- `pcpdt rename <source> <destination>` - Rename or move files/directories
+- `pcpdt delete <path> [--confirm]` - Delete files/directories with safety confirmation
+
+### Version 1.0.0
+**Initial Release:**
+- Upload files and folders to Nextcloud
+- Download files and folders from Nextcloud  
+- List directory contents
+- Internal file sharing with specific users
+- Support for Global shared folder collaboration
 
 ## Features
 
 - Upload files and folders to the Nextcloud instance (similar to cp -r)
 - Download files from Nextcloud
 - Access the Global shared folder for collaboration
-- Basic file operations: upload, download, list files
+- Complete file operations: upload, download, list, rename, delete files
+- Internal sharing with specific users
+- Safe deletion with confirmation prompts
+- Rename/move files and directories
 - Works on Windows, macOS, and Linux
 
 ## Shared Folders
@@ -170,6 +194,51 @@ Available permissions: `read`, `write`, `all`
 
 **Note:** Group sharing is not implemented in this Nextcloud instance.
 
+### Rename/Move Files and Directories
+
+Rename a file:
+```bash
+pcpdt rename /Documents/old_name.pdf /Documents/new_name.pdf
+```
+
+Move a file to a different directory:
+```bash
+pcpdt rename /Documents/report.pdf /Global/report.pdf
+```
+
+Rename a directory:
+```bash
+pcpdt rename /Projects/old_project /Projects/new_project
+```
+
+Move a directory:
+```bash
+pcpdt rename /Documents/my_folder /Global/my_folder
+```
+
+### Delete Files and Directories
+
+Delete a file (with confirmation prompt):
+```bash
+pcpdt delete /Documents/unwanted_file.pdf
+```
+
+Delete a directory (with confirmation prompt):
+```bash
+pcpdt delete /Documents/old_folder
+```
+
+Delete without confirmation prompt:
+```bash
+pcpdt delete /Documents/unwanted_file.pdf --confirm
+pcpdt delete /Documents/old_folder --confirm
+```
+
+**Safety Note:** The delete command will:
+- Show a confirmation prompt by default
+- Warn you when deleting directories that contain files
+- Allow you to skip confirmation with `--confirm` flag
+
 ## Examples
 
 
@@ -184,6 +253,31 @@ pcpdt download /Global/analysis-results.xlsx ./
 
 # List files in the shared folder
 pcpdt list /Global/
+
+# Rename a file
+pcpdt rename /Global/analysis-results.xlsx /Global/final-results.xlsx
+
+# Delete an old file (with confirmation)
+pcpdt delete /Global/old-data.csv
+```
+
+### Complete Workflow Example
+
+```bash
+# Upload a project folder
+pcpdt upload ./my_project /Global/
+
+# List the uploaded contents
+pcpdt list /Global/my_project
+
+# Rename the project folder
+pcpdt rename /Global/my_project /Global/project_v2
+
+# Share with a colleague
+pcpdt share /Global/project_v2 colleague_username
+
+# Clean up old files
+pcpdt delete /Global/old_project --confirm
 ```
 
 ## Important Notes
