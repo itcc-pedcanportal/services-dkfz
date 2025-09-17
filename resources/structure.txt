@@ -1,0 +1,674 @@
+
+===== ./meta_study.txt =====
+cancer_study_identifier: PedCanPortal
+type_of_cancer: mixed
+name: Release 2025-07-14
+description: Combined PedcanPortal Study
+groups: PUBLIC
+reference_genome: hg38
+add_global_case_list: true
+
+===== ./meta_cancer_type.txt =====
+genetic_alteration_type: CANCER_TYPE
+datatype: CANCER_TYPE
+data_filename: cancer_type.txt
+
+===== ./cancer_type.txt =====
+all	ALL	lightblue	tissue
+aml	AML	orange	tissue
+dsrct	DSRCT	mediumpurple	tissue
+epn	EPN	steelblue	tissue
+ews	EWS	purple	tissue
+hgg	HGG	darkblue	tissue
+hl	HL	lightgreen	tissue
+lgg	LGG	skyblue	tissue
+mb	MB	darkgreen	tissue
+mixed	Mixed Cancer Types	gray	tissue
+nbl	NBL	red	tissue
+nhl	NHL	green	tissue
+osteo	Osteo	brown	tissue
+other	Other	darkgray	tissue
+rhabdoid	Rhabdoid	darkred	tissue
+sts	STS	salmon	tissue
+wt	WT	darkorange	tissue
+example_cancer_type	Custom Cancer Type	HotPink	tissue
+
+===== ./meta_clinical_sample.txt =====
+cancer_study_identifier: PedCanPortal
+genetic_alteration_type: CLINICAL
+datatype: SAMPLE_ATTRIBUTES
+data_filename: data_clinical_sample.txt
+
+===== ./meta_case_list.txt =====
+cancer_study_identifier: PedCanPortal
+datatype: CASE_LIST
+data_filename: cases_sequenced.txt
+
+
+===== ./case_lists/cases_sequenced.txt =====
+cancer_study_identifier: PedCanPortal
+stable_id: PedCanPortal_sequenced
+case_list_name: All sequenced tumors
+case_list_description: All tumors that were sequenced
+case_list_category: all_cases_with_mutation_data
+case_list_ids: P002AD0RV_1	P003GK035_1	P004MR0NL_1	P006Z407R_1	P0084A07H_1	P0099H0W7_1	P00AFP05P_1	P00C6W0Y0_1	P00DT20DM_1	P00EY80W3_1	P00HUA0GT_1	P0156006W_1	P053M6XT5_1	P05P72NPV_1	P090PNENG_1	P0CLWGYKQ_1	P0ECN5VHJ_1	P0ECN5VHJ_2	P0KRKM80V_1	P0N5XHYRX_1	P0Q17L8FA_1	P0Q7RCPRR_1	P0RDY5VK5_1	P10ZD2JFR_1	P12CU5D2C_1	P16QXMXKR_1	P1HLR72KC_1	P224K3L1C_1	P25897YQZ_1	P260NU8DD_1	P26463375_1	P28W1R334_1	P2D1V456Z_1	P2D44NLU1_1	P2E85MX74_1	P2PDA9DQG_1	P2QFQ52UK_1	P2ZPCRYKK_1	P36HZ9C0X_1	P37CPCDZU_1	P3DD9UPEL_1	P3R1AN0V0_1	P3VTP0N7D_1	P40VWL6JQ_1	P41YR76W2_1	P45DY8ZH8_1	P45RJNKJ7_1	P47T5W4P0_1	P48QDYH23_1	P4E4P3Z9C_1	P4EMZ3NQL_1	P4K1CKKPZ_1	P4K606AGC_1	P4QNQ0FP2_1	P4RAMDF0M_1	P50H8M04J_1	P5WCT5857_1	P5XUTAPTE_1	P617HE2HA_1	P61L492K7_1	P65JL69KR_1	P66T3FK1L_1	P679CUL18_1	P681YUNWA_1	P6E16HXDX_1	P6P309FEQ_1	P6RKR1QT8_1	P711PGLTF_1	P76C4H8F4_1	P7CZHHQJ2_1	P7D7ML94M_1	P7HRE04TW_1	P7QEK5F56_1	P85UW4R6K_1	P86K40GGF_1	P882GJZ93_1	P8AVP1XH2_1	P8DGRPX3R_1	P8N4U2PNJ_1	P8QUCV3GX_1	P8R89EA3D_1	P8RZJQXDN_1	P8VQDGRTX_1	P8XY7W0WX_1	P9771E0Z3_1	P9JJZ20DG_1	P9QMK3GVX_1	P9XJGEYHY_1	PA5KQWWLD_1	PAEDV25CY_1	PAN9EY0GT_1	PARHF4LGF_1	PARUWULMW_1	PAT6VHHE5_1	PC0MXE2DZ_1	PC61VKVGY_1	PC6U8552K_1	PCD30EW1L_1	PCEQ9RPNM_1	PCP9ZTN4D_1	PD19UU4KX_1	PD3H4XFG0_1	PD5X6MGQC_1	PD74PW7L2_1	PDCX5XU12_1	PDDC4HFDX_1	PDDC4HFDX_2	PDE9CKU5T_1	PDE9CKU5T_2	PDHTUKX47_1	PDKYDRM4Y_1	PDNF2Z1UD_1	PDQDE9076_1	PDR3MJLR8_1	PDR5ZH6ZR_1	PDRP7YC47_1	PDXX31ZRQ_1	PE140WNFC_1	PE1HTYNWM_1	PE6L8QLMU_1	PE7VHUQK7_1	PEDK3ACXC_1	PEJV8N6MX_1	PEVN1WAXA_1	PEWL8M275_1	PF0Y6W0VC_1	PF26WF01D_1	PF5N2D2T5_1	PF5N2D2T5_2	PFDMEV43F_1	PFE5VY52J_1	PFJXNZFTT_1	PFQLCYNRH_1	PFRF47GMY_1	PFWNL4V3T_1	PG72DAX78_1	PG7CHFQDE_1	PG931JCDG_1	PGDPRG3VH_1	PGWQXRU34_1	PH212JLHU_1	PH2KRL2JM_1	PH2TQ4J6X_1	PH5ZJ3NPN_1	PH68U0JHT_1	PH6VEYU3V_1	PH8E5W302_1	PHD6G91DG_1	PHDT2KLWW_1	PHE2DE7NA_1	PHJGMR41X_1	PHTDH797L_1	PHUTC553C_1	PHWU7FH9F_1	PHXLU8UWJ_1	PJ0TK6NJU_1	PJ55YT9AH_1	PJ84UHK4Y_1	PJ8YDQRXZ_1	PJCUVAX72_1	PJDFLDNUH_1	PJDVEAU2X_1	PJQC89XL5_1	PJQDV31QE_1	PJQWNQPMQ_1	PJWWK66D7_1	PK1D576K0_1	PK5QDYZLG_1	PK6MFHQCM_1	PK6MFHQCM_2	PK701XVYR_1	PKDXQ0H43_1	PKETLGZHV_1	PKRCT9E0U_1	PKWYWUPL7_1	PL16C6JP3_1	PL5ALPLYP_1	PL8TQUFW3_1	PLE01N097_1	PLQK6ZKQ4_1	PM10J928R_1	PM281N20P_1	PMEEZY20K_1	PMHP2LLT7_1	PMJRY7LZZ_1	PMP7N9E0R_1	PMQAHK86E_1	PMRLY0PHM_1	PMT46JH22_1	PMW0NUZ0P_1	PN5G8QM59_1	PN6GTH70F_1	PN6WKNYX4_1	PN8N30VLX_1	PND9Z78ZR_1	PNT5CGJ5J_1	PP227RNGD_1	PP5TQF5E7_1	PP7XUPTZD_1	PP7XUPTZD_2	PPCRJTGRV_1	PPEAHE4Y2_1	PPEHAPU6W_1	PPQA3DYVF_1	PPR9GD96T_1	PPT6HGP4K_1	PPTK31CKN_1	PQ6NL4NHH_1	PQ7J4WF1K_1	PQJEAA0MH_1	PQT1VJVFJ_1	PQT7NDN54_1	PQXP3VV9C_1	PR0KL0JK6_1	PR1QT0JAD_1	PR1WERJ8P_1	PRE70U2H8_1	PRJA391P8_1	PRQJ22LZK_1	PRRJL1KY2_1	PRT8VD563_1	PT66HKURJ_1	PT8RDXJG9_1	PTD59ZVKQ_1	PTEVY5JWR_1	PTN74JC5Z_1	PTPFMTML3_1	PTRX6R89C_1	PTRXZK5UR_1	PTTA0DVA8_1	PTVYC705X_1	PU296W4UC_1	PU5W1XCD5_1	PU6XQE20L_1	PU93M1P29_1	PUDEG4YFF_1	PUE3J9404_1	PUHUQDN87_1	PUHZMV07U_1	PUQ5WNWMJ_1	PUQZ0NR4C_1	PUR74E5KD_1	PUTC5ACJ0_1	PV7PVZJN6_1	PVCP76KZ2_1	PVHG3F085_1	PVJPLU0T9_1	PVK0666T8_1	PVNCRDN93_1	PVQ8XCVV2_1	PVRRJW0WX_1	PVTDAC1F4_1	PW1DVHXDD_1	PW23DW0HX_1	PW5LXMYU9_1	PW6PRXTU5_1	PW6PRXTU5_2	PW709HXL0_1	PWRG94FPN_1	PWTEH6UXM_1	PWTQNY4DL_1	PWY3VK590_1	PXEKMADXP_1	PXNHEF7VW_1	PXP5ATPC9_1	PXQ3K53PF_1	PXQGX3H3R_1	PXTFN7HP0_1	PY1XKZL5G_1	PY5YCAJV1_1	PY6EFZZ9V_1	PY7U0D92M_1	PYD8TWG58_1	PYDQ0JKZ0_1	PYEG4RDN2_1	PYTGU508V_1	PYVW0LKJJ_1	PYXRFN41D_1	PZ1C00NVG_1	PZ1NFPNG5_1	PZ6YX66DL_1	PZ805NDRV_1	PZDHY03KD_1	PZQR0WH1Y_1	PZTHZN3QM_1
+
+===== ./meta_clinical_patient.txt =====
+cancer_study_identifier: PedCanPortal
+genetic_alteration_type: CLINICAL
+datatype: PATIENT_ATTRIBUTES
+data_filename: data_clinical_patient.txt
+
+===== ./data_clinical_patient.txt =====
+#Age	Sex	Os Months	Os Status	Patient Id
+#Age at diagnosis	Sex of the Patient	Overall survival in months	Overall patient survival status	Patient Identifier
+#NUMBER	STRING	NUMBER	STRING	STRING
+#1	1	1	1	1
+AGE	SEX	OS_MONTHS	OS_STATUS	PATIENT_ID
+1	Male	24	1:DECEASED	PXP5ATPC9
+15	Female	209	1:DECEASED	PFDMEV43F
+1	Male	82	1:DECEASED	PDR5ZH6ZR
+5	Male	102	1:DECEASED	P66T3FK1L
+1	Female	20	1:DECEASED	PZ1NFPNG5
+17	Female	262	1:DECEASED	PJCUVAX72
+12	Female	214	1:DECEASED	PJDFLDNUH
+6	Female	144	1:DECEASED	PW23DW0HX
+8	Female	151	1:DECEASED	P8QUCV3GX
+13	Female	202	1:DECEASED	PM10J928R
+15	Male	194	1:DECEASED	P6RKR1QT8
+3	Female	161	0:LIVING	PPR9GD96T
+3	Female	48	1:DECEASED	PG931JCDG
+3	Male	95	1:DECEASED	P45RJNKJ7
+6	Female	89	1:DECEASED	PFE5VY52J
+15	Male	210	1:DECEASED	PAN9EY0GT
+4	Male	149	0:LIVING	P7D7ML94M
+3	Male	102	1:DECEASED	PTRX6R89C
+2	Female	123	0:LIVING	PXQ3K53PF
+0	Female	62	1:DECEASED	PM281N20P
+1	Male	60	1:DECEASED	P61L492K7
+9	Female	127	1:DECEASED	PJQDV31QE
+20	Female	403	0:LIVING	PU6XQE20L
+1	Female	29	1:DECEASED	PPEAHE4Y2
+15	Female	274	0:LIVING	P85UW4R6K
+9	Female	267	0:LIVING	PU296W4UC
+11	Male	159	1:DECEASED	PD5X6MGQC
+22	Male	293	1:DECEASED	PUQ5WNWMJ
+0	Female	28	1:DECEASED	PF5N2D2T5
+17	Female	224	1:DECEASED	PDE9CKU5T
+11	Male	259	0:LIVING	PH68U0JHT
+7	Male	181	0:LIVING	P9771E0Z3
+7	Female	91	1:DECEASED	PTPFMTML3
+8	Female	164	1:DECEASED	PE7VHUQK7
+11	Female	150	1:DECEASED	P0RDY5VK5
+17	Male	271	1:DECEASED	P7QEK5F56
+1	Male	36	1:DECEASED	PA5KQWWLD
+7	Female	208	1:DECEASED	PEVN1WAXA
+17	Male	219	1:DECEASED	P617HE2HA
+1	Male	112	1:DECEASED	PTVYC705X
+4	Female	146	1:DECEASED	PTD59ZVKQ
+2	Female	77	1:DECEASED	PN5G8QM59
+9	Male	149	1:DECEASED	PKETLGZHV
+8	Male	112	1:DECEASED	PAEDV25CY
+2	Male	112	0:LIVING	PVCP76KZ2
+12	Male	299	0:LIVING	PE140WNFC
+7	Female	185	0:LIVING	PPQA3DYVF
+7	Male	100	1:DECEASED	P2D44NLU1
+9	Female	170	1:DECEASED	P76C4H8F4
+16	Male	214	1:DECEASED	PE1HTYNWM
+11	Male	164	1:DECEASED	PV7PVZJN6
+5	Female	73	1:DECEASED	PH5ZJ3NPN
+13	Female	197	1:DECEASED	P26463375
+13	Male	182	1:DECEASED	PEWL8M275
+15	Female	187	1:DECEASED	PY5YCAJV1
+13	Male	269	0:LIVING	PMT46JH22
+3	Male	200	0:LIVING	PVNCRDN93
+5	Male	67	1:DECEASED	P8R89EA3D
+3	Male	64	1:DECEASED	P0Q7RCPRR
+2	Female	35	1:DECEASED	PPEHAPU6W
+9	Male	113	1:DECEASED	P1HLR72KC
+6	Female	175	0:LIVING	PQ6NL4NHH
+3	Female	160	0:LIVING	PK6MFHQCM
+13	Male	209	1:DECEASED	P002AD0RV
+13	Female	165	1:DECEASED	PHXLU8UWJ
+0	Male	90	0:LIVING	PMRLY0PHM
+2	Male	118	1:DECEASED	PJ0TK6NJU
+10	Male	245	0:LIVING	PCEQ9RPNM
+4	Female	89	1:DECEASED	PMEEZY20K
+14	Male	195	1:DECEASED	PJ55YT9AH
+17	Female	224	1:DECEASED	PGDPRG3VH
+9	Female	122	1:DECEASED	P25897YQZ
+17	Male	208	1:DECEASED	PZTHZN3QM
+12	Male	263	0:LIVING	P2PDA9DQG
+10	Male	206	0:LIVING	PN6GTH70F
+17	Female	220	1:DECEASED	P8N4U2PNJ
+11	Male	158	1:DECEASED	PJ8YDQRXZ
+0	Male	166	0:LIVING	P6E16HXDX
+14	Female	228	1:DECEASED	PJQC89XL5
+4	Male	70	1:DECEASED	P37CPCDZU
+0	Male	14	1:DECEASED	PKRCT9E0U
+9	Female	193	1:DECEASED	P9QMK3GVX
+12	Female	164	1:DECEASED	PJ84UHK4Y
+15	Female	192	1:DECEASED	PC61VKVGY
+14	Female	191	1:DECEASED	P36HZ9C0X
+14	Male	188	1:DECEASED	PXQGX3H3R
+7	Male	98	1:DECEASED	PXEKMADXP
+1	Female	15	1:DECEASED	PE6L8QLMU
+9	Female	182	1:DECEASED	PWTEH6UXM
+9	Male	198	0:LIVING	PFWNL4V3T
+12	Male	224	1:DECEASED	PJDVEAU2X
+1	Male	27	1:DECEASED	PD74PW7L2
+12	Male	226	1:DECEASED	PVRRJW0WX
+14	Female	180	1:DECEASED	PJQWNQPMQ
+0	Female	24	1:DECEASED	PP7XUPTZD
+5	Female	167	0:LIVING	PD19UU4KX
+7	Male	171	0:LIVING	PH212JLHU
+1	Female	56	1:DECEASED	PRE70U2H8
+15	Female	207	1:DECEASED	PUTC5ACJ0
+2	Female	41	1:DECEASED	PC6U8552K
+6	Male	118	1:DECEASED	PDRP7YC47
+13	Male	200	1:DECEASED	PPCRJTGRV
+3	Male	75	1:DECEASED	P2D1V456Z
+7	Female	194	0:LIVING	PJWWK66D7
+0	Female	94	0:LIVING	PND9Z78ZR
+13	Male	285	0:LIVING	PVJPLU0T9
+17	Male	259	1:DECEASED	P47T5W4P0
+8	Male	111	1:DECEASED	P8VQDGRTX
+3	Female	216	1:DECEASED	P679CUL18
+4	Male	75	1:DECEASED	P48QDYH23
+11	Male	151	1:DECEASED	P3R1AN0V0
+9	Female	140	1:DECEASED	P711PGLTF
+17	Female	218	1:DECEASED	PW6PRXTU5
+19	Male	265	1:DECEASED	P0Q17L8FA
+19	Male	240	1:DECEASED	PUDEG4YFF
+11	Male	166	1:DECEASED	PHD6G91DG
+5	Male	159	0:LIVING	P8DGRPX3R
+0	Female	37	1:DECEASED	PN8N30VLX
+21	Female	401	1:DECEASED	P00EY80W3
+14	Female	190	1:DECEASED	PMP7N9E0R
+1	Male	92	0:LIVING	P16QXMXKR
+13	Male	260	0:LIVING	P0099H0W7
+1	Female	63	1:DECEASED	P00DT20DM
+1	Male	104	0:LIVING	PL16C6JP3
+14	Female	201	1:DECEASED	PR0KL0JK6
+1	Male	45	1:DECEASED	PG72DAX78
+3	Female	124	0:LIVING	PY6EFZZ9V
+0	Male	52	1:DECEASED	PZ1C00NVG
+1	Female	84	1:DECEASED	PDR3MJLR8
+3	Male	53	1:DECEASED	PARUWULMW
+17	Male	245	1:DECEASED	P9JJZ20DG
+0	Male	23	1:DECEASED	PK1D576K0
+5	Female	73	1:DECEASED	P006Z407R
+2	Male	70	1:DECEASED	PUR74E5KD
+9	Male	216	0:LIVING	P0084A07H
+14	Female	230	1:DECEASED	PCD30EW1L
+4	Female	101	1:DECEASED	P3DD9UPEL
+8	Male	210	0:LIVING	P65JL69KR
+15	Male	282	0:LIVING	PDQDE9076
+9	Male	132	1:DECEASED	PRRJL1KY2
+9	Male	123	1:DECEASED	P10ZD2JFR
+4	Female	125	0:LIVING	PCP9ZTN4D
+14	Female	211	1:DECEASED	PMHP2LLT7
+14	Female	270	0:LIVING	PL5ALPLYP
+14	Female	255	0:LIVING	PWRG94FPN
+4	Male	280	1:DECEASED	PKWYWUPL7
+3	Male	126	0:LIVING	P41YR76W2
+11	Male	144	1:DECEASED	PGWQXRU34
+4	Female	72	1:DECEASED	P6P309FEQ
+8	Male	120	1:DECEASED	PF26WF01D
+4	Female	143	0:LIVING	PUQZ0NR4C
+11	Female	162	1:DECEASED	PZ6YX66DL
+9	Female	138	1:DECEASED	PL8TQUFW3
+9	Female	348	1:DECEASED	P090PNENG
+17	Male	215	1:DECEASED	PLE01N097
+4	Female	59	1:DECEASED	PTTA0DVA8
+7	Female	168	0:LIVING	PDCX5XU12
+15	Male	215	1:DECEASED	P0156006W
+4	Female	63	1:DECEASED	P28W1R334
+4	Female	126	0:LIVING	P4EMZ3NQL
+14	Female	262	0:LIVING	PN6WKNYX4
+14	Female	263	0:LIVING	PVQ8XCVV2
+2	Female	53	1:DECEASED	PT66HKURJ
+12	Female	176	1:DECEASED	PEDK3ACXC
+9	Male	231	0:LIVING	P5XUTAPTE
+9	Male	215	0:LIVING	PDNF2Z1UD
+2	Female	56	1:DECEASED	PDDC4HFDX
+12	Male	160	1:DECEASED	P00AFP05P
+2	Female	212	0:LIVING	PR1WERJ8P
+14	Female	206	1:DECEASED	PQXP3VV9C
+2	Male	128	0:LIVING	P05P72NPV
+3	Male	60	1:DECEASED	PMJRY7LZZ
+2	Male	47	1:DECEASED	P50H8M04J
+1	Female	119	0:LIVING	PW5LXMYU9
+4	Female	81	1:DECEASED	PP227RNGD
+14	Female	188	1:DECEASED	PXTFN7HP0
+17	Male	296	0:LIVING	P86K40GGF
+0	Male	26	1:DECEASED	PK5QDYZLG
+2	Male	161	0:LIVING	PQT7NDN54
+1	Female	31	1:DECEASED	PH6VEYU3V
+9	Male	137	1:DECEASED	P0CLWGYKQ
+0	Female	106	0:LIVING	P8RZJQXDN
+18	Male	266	1:DECEASED	PARHF4LGF
+0	Male	111	0:LIVING	PFRF47GMY
+0	Female	35	1:DECEASED	PHJGMR41X
+8	Male	162	1:DECEASED	PMW0NUZ0P
+17	Male	258	1:DECEASED	PYD8TWG58
+0	Male	7	1:DECEASED	PHWU7FH9F
+14	Male	178	1:DECEASED	PVHG3F085
+0	Female	102	0:LIVING	PEJV8N6MX
+6	Female	251	0:LIVING	PXNHEF7VW
+6	Male	110	1:DECEASED	P260NU8DD
+9	Male	219	0:LIVING	PYVW0LKJJ
+15	Male	201	1:DECEASED	PDXX31ZRQ
+17	Male	257	1:DECEASED	P4QNQ0FP2
+2	Female	56	1:DECEASED	P882GJZ93
+11	Female	254	0:LIVING	P4RAMDF0M
+0	Female	17	1:DECEASED	P9XJGEYHY
+10	Female	222	1:DECEASED	PPT6HGP4K
+3	Male	53	1:DECEASED	PQJEAA0MH
+12	Male	222	0:LIVING	PQT1VJVFJ
+1	Male	103	0:LIVING	PHE2DE7NA
+12	Male	165	1:DECEASED	PZ805NDRV
+5	Female	89	1:DECEASED	PTN74JC5Z
+15	Male	219	1:DECEASED	PRT8VD563
+7	Male	157	1:DECEASED	P0ECN5VHJ
+13	Male	175	1:DECEASED	P224K3L1C
+13	Male	166	1:DECEASED	PC0MXE2DZ
+6	Male	92	1:DECEASED	P004MR0NL
+15	Female	226	1:DECEASED	PK701XVYR
+6	Female	100	1:DECEASED	PF0Y6W0VC
+4	Male	53	1:DECEASED	PHDT2KLWW
+0	Male	18	1:DECEASED	P7HRE04TW
+14	Female	214	1:DECEASED	PU5W1XCD5
+10	Male	130	1:DECEASED	PLQK6ZKQ4
+12	Male	177	1:DECEASED	PMQAHK86E
+14	Female	292	1:DECEASED	PKDXQ0H43
+4	Male	128	0:LIVING	P4E4P3Z9C
+0	Male	9	1:DECEASED	PZDHY03KD
+16	Male	328	0:LIVING	PP5TQF5E7
+0	Male	8	1:DECEASED	P2QFQ52UK
+3	Male	217	0:LIVING	P053M6XT5
+6	Male	87	1:DECEASED	PYTGU508V
+14	Male	280	0:LIVING	PY1XKZL5G
+15	Male	227	1:DECEASED	PFQLCYNRH
+15	Female	213	1:DECEASED	P45DY8ZH8
+21	Female	296	1:DECEASED	P003GK035
+15	Female	224	1:DECEASED	PZQR0WH1Y
+16	Female	274	1:DECEASED	P7CZHHQJ2
+12	Male	269	0:LIVING	PTEVY5JWR
+11	Female	244	0:LIVING	P40VWL6JQ
+1	Male	23	1:DECEASED	PYXRFN41D
+14	Female	212	1:DECEASED	PVTDAC1F4
+15	Male	237	1:DECEASED	P3VTP0N7D
+5	Male	94	1:DECEASED	PRQJ22LZK
+6	Female	293	0:LIVING	PR1QT0JAD
+5	Female	129	1:DECEASED	PYEG4RDN2
+4	Female	79	1:DECEASED	P2E85MX74
+8	Male	115	1:DECEASED	PUHUQDN87
+0	Female	94	0:LIVING	PUE3J9404
+0	Male	18	1:DECEASED	PNT5CGJ5J
+11	male	150	1:DECEASED	PY7U0D92M
+14	male	203	1:DECEASED	P8XY7W0WX
+12	male	171	1:DECEASED	PPTK31CKN
+14	male	196	1:DECEASED	PHTDH797L
+14	male	217	1:DECEASED	PHUTC553C
+6	male	216	0:LIVING	PW709HXL0
+10	male	225	0:LIVING	PAT6VHHE5
+11	male	202	0:LIVING	P8AVP1XH2
+13	male	168	1:DECEASED	PW1DVHXDD
+11	male	162	1:DECEASED	P00C6W0Y0
+13	male	262	0:LIVING	PH8E5W302
+4	male	83	1:DECEASED	PQ7J4WF1K
+16	female	251	1:DECEASED	PT8RDXJG9
+3	male	61	1:DECEASED	PYDQ0JKZ0
+13	female	230	0:LIVING	PFJXNZFTT
+0	female	23	1:DECEASED	PH2TQ4J6X
+12	male	180	1:DECEASED	PWY3VK590
+NA	NA	NA	NA	P0N5XHYRX
+7	male	99	1:DECEASED	PG7CHFQDE
+17	female	287	0:LIVING	P681YUNWA
+14	male	230	0:LIVING	PU93M1P29
+6	male	151	0:LIVING	P00HUA0GT
+12	male	241	0:LIVING	P5WCT5857
+10	male	167	1:DECEASED	PTRXZK5UR
+9	male	180	0:LIVING	PWTQNY4DL
+5	male	165	0:LIVING	PD3H4XFG0
+1	female	109	0:LIVING	P2ZPCRYKK
+1	NA	NA	NA:NA	P0KRKM80V
+1	NA	NA	NA:NA	P12CU5D2C
+1	NA	NA	NA:NA	P4K1CKKPZ
+1	NA	NA	NA:NA	P4K606AGC
+1	NA	NA	NA:NA	PDHTUKX47
+1	NA	NA	NA:NA	PDKYDRM4Y
+1	NA	NA	NA:NA	PH2KRL2JM
+1	NA	NA	NA:NA	PRJA391P8
+1	NA	NA	NA:NA	PUHZMV07U
+1	NA	NA	NA:NA	PVK0666T8
+
+===== ./meta_mutation.txt =====
+cancer_study_identifier: PedCanPortal
+genetic_alteration_type: MUTATION_EXTENDED
+datatype: MAF
+data_filename: data_mutation.maf
+stable_id: mutations
+profile_name: Mutations
+profile_description: WGS mutations
+show_profile_in_analysis_tab: true
+swissprot_identifier: name
+
+===== ./data_clinical_sample.txt =====
+#Sample Id	Age in Months at sample extraction	Diagnosis Code	Tumor domain	Molecular Diagnosis Group	Molecular Diagnosis Subgroup	Patient Id	Somatic Mutation Load	Tumor Percentage
+#Sample Identifier	Age in months when sample was extracted	Code of the diagnosis	Tumor domain	Molecular Diagnosis Group	Molecular Diagnosis Subgroup	Patient Identifier	Somatic Mutation Load of Patient	Tumor Percentage of sample
+#STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING	STRING
+#1	1	1	1	1	1	1	1	1
+SAMPLE_ID	MONTHS_SINCE_SAMPLE_EXTRACTION	CANCER_TYPE	SAMPLE_CLASS	CANCER_TYPE_DETAILED	MOLECULAR_DIAG_SUBGROUP	PATIENT_ID	SOMATIC_MUTATION_LOAD	TUMOR_PERCENTAGE
+PXP5ATPC9_1	12	Other	CNS embryonal tumour	CNS embryonal	CNS embryonal tumour, NOS	PXP5ATPC9	3	0
+PFDMEV43F_1	192	AML	Leukaemia	AML	Acute myeloid leukaemia	PFDMEV43F	7	0
+PDR5ZH6ZR_1	72	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PDR5ZH6ZR	3474	0
+P66T3FK1L_1	84	HGG	Pineal tumour	Pineoblastoma	Pineoblastoma, NOS	P66T3FK1L	29	0
+PZ1NFPNG5_1	12	Other	CNS embryonal tumour	ETMR	Embryonal tumour with multilayered rosettes, C19MC-altered	PZ1NFPNG5	6	0
+PJCUVAX72_1	204	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PJCUVAX72	18	0
+PJDFLDNUH_1	180	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PJDFLDNUH	18	0
+PW23DW0HX_1	96	NBL	Neuroblastoma	NBL	Neuroblastoma	PW23DW0HX	58	0
+P8QUCV3GX_1	144	MB	CNS embryonal tumour	MB-SHH	Medulloblastoma, SHH-activated and TP53-wildtype	P8QUCV3GX	27	0
+PM10J928R_1	180	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PM10J928R	24	0
+P6RKR1QT8_1	180	Other	Carcinoma	Carcinoma	Upper gastrointestinal carcinoma	P6RKR1QT8	42	0
+PPR9GD96T_1	48	NBL	Neuroblastoma	NBL	Neuroblastoma	PPR9GD96T	40	0
+PG931JCDG_1	36	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PG931JCDG	8	0
+P45RJNKJ7_1	72	Other	Meningioma	Meningioma	Meningioma WHO G2	P45RJNKJ7	11	0
+PFE5VY52J_1	72	Other	Solid other	Solid other	Malignant undifferentiated tumour	PFE5VY52J	19	0
+PAN9EY0GT_1	204	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PAN9EY0GT	16	0
+P7D7ML94M_1	48	STS	Solid other	Fibroblastic and myofibroblastic tumour	Spindle cell neoplasm	P7D7ML94M	3	0
+PTRX6R89C_1	60	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PTRX6R89C	62	0
+PXQ3K53PF_1	36	NBL	Neuroblastoma	NBL	Neuroblastoma	PXQ3K53PF	0	0
+PM281N20P_1	24	AML	Leukaemia	AML	Acute myeloid leukaemia	PM281N20P	101	0
+P61L492K7_1	12	STS	Solid other	Fibroblastic and myofibroblastic tumour	Desmoid fibromatosis	P61L492K7	1	0
+PJQDV31QE_1	120	AML	Leukaemia	AML	Acute myeloid leukaemia	PJQDV31QE	22	0
+PU6XQE20L_1	312	HGG	Adult-type diffuse glioma	HGG	Astrocytoma, IDH-mutant WHO G4	PU6XQE20L	292	0
+PPEAHE4Y2_1	12	Rhabdoid	Kidney tumour	Rhabdoid tumour	Malignant rhabdoid tumour, renal	PPEAHE4Y2	8	0
+P85UW4R6K_1	192	STS	Peripheral nerve sheath tumour	MPNST	Malignant peripheral nerve sheath tumour	P85UW4R6K	35	0
+PU296W4UC_1	180	Other	Solid other	Solid other	Solid pseudopapillary neoplasm of pancreas	PU296W4UC	11	0
+PD5X6MGQC_1	132	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PD5X6MGQC	14	0
+PUQ5WNWMJ_1	264	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PUQ5WNWMJ	22	0
+PF5N2D2T5_1	24	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	PF5N2D2T5	22	0
+PF5N2D2T5_2	24	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	PF5N2D2T5	37	0
+PDE9CKU5T_1	216	Other	Solid other	Solid other	Myoepithelial tumour	PDE9CKU5T	17	0
+PDE9CKU5T_2	204	Other	Solid other	Solid other	Myoepithelial tumour	PDE9CKU5T	15	0
+PH68U0JHT_1	132	Other	Lymphoma	Mature T lymphoma	Peripheral T-cell lymphoma	PH68U0JHT	8	0
+P9771E0Z3_1	84	STS	Sarcoma other	Synovial sarcoma	Synovial sarcoma	P9771E0Z3	3	0
+PTPFMTML3_1	84	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PTPFMTML3	16	0
+PE7VHUQK7_1	144	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PE7VHUQK7	13	0
+P0RDY5VK5_1	144	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P0RDY5VK5	453	0
+P7QEK5F56_1	240	MB	CNS embryonal tumour	MB-SHH	Medulloblastoma, SHH-activated and TP53-wildtype	P7QEK5F56	32	0
+PA5KQWWLD_1	24	Other	Leukaemia	Acute leukaemia	Acute undifferentiated leukaemia	PA5KQWWLD	4	0
+PEVN1WAXA_1	192	STS	Sarcoma other	Sarcoma other	Alveolar soft part sarcoma	PEVN1WAXA	14	0
+P617HE2HA_1	204	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Spindle cell rhabdomyosarcoma	P617HE2HA	62	0
+PTVYC705X_1	36	EPN	Ependymoma	EPN-PFA	Posterior fossa A ependymoma, group PFA, WHO G3	PTVYC705X	18	0
+PTD59ZVKQ_1	108	NBL	Neuroblastoma	NBL	Neuroblastoma	PTD59ZVKQ	83	0
+PN5G8QM59_1	48	NBL	Neuroblastoma	NBL	Neuroblastoma	PN5G8QM59	94	0
+PKETLGZHV_1	132	AML	Leukaemia	AML	Acute myeloid leukaemia	PKETLGZHV	23	0
+PAEDV25CY_1	96	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PAEDV25CY	8	0
+PVCP76KZ2_1	24	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PVCP76KZ2	3	0
+PE140WNFC_1	216	Other	Choroid plexus tumour	Choroid plexus tumour	Atypical choroid plexus papilloma	PE140WNFC	26	0
+PPQA3DYVF_1	96	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PPQA3DYVF	10	0
+P2D44NLU1_1	84	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Embryonal rhabdomyosarcoma	P2D44NLU1	48	0
+P76C4H8F4_1	144	Other	CNS embryonal tumour	CNS embryonal	CNS embryonal tumour, NOS	P76C4H8F4	0	0
+PE1HTYNWM_1	192	STS	Peripheral nerve sheath tumour	MPNST	Malignant peripheral nerve sheath tumour	PE1HTYNWM	13	0
+PV7PVZJN6_1	156	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	PV7PVZJN6	28	0
+PH5ZJ3NPN_1	60	MB	CNS embryonal tumour	MB-non WNT/non-SHH	Medulloblastoma, non-WNT/non-SHH	PH5ZJ3NPN	12	0
+P26463375_1	156	NBL	Neuroblastoma	NBL	Neuroblastoma	P26463375	16	0
+PEWL8M275_1	156	DSRCT	Sarcoma other	Desmoplastic small round cell tumour	Desmoplastic small round cell tumour	PEWL8M275	7	0
+PY5YCAJV1_1	180	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	PY5YCAJV1	23	0
+PMT46JH22_1	180	STS	Peripheral nerve sheath tumour	MPNST	Malignant peripheral nerve sheath tumour	PMT46JH22	37	0
+PVNCRDN93_1	84	NBL	Neuroblastoma	NBL	Neuroblastoma	PVNCRDN93	39	0
+P8R89EA3D_1	60	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P8R89EA3D	5067	0
+P0Q7RCPRR_1	48	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Embryonal rhabdomyosarcoma	P0Q7RCPRR	36	0
+PPEHAPU6W_1	24	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PPEHAPU6W	12	0
+P1HLR72KC_1	108	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P1HLR72KC	17	0
+PQ6NL4NHH_1	84	Other	Choroid plexus tumour	Choroid plexus tumour	Choroid plexus carcinoma, TP53-mutant	PQ6NL4NHH	36	0
+PK6MFHQCM_1	72	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PK6MFHQCM	42	0
+PK6MFHQCM_2	72	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PK6MFHQCM	31	0
+P002AD0RV_1	168	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	P002AD0RV	2	0
+PHXLU8UWJ_1	156	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PHXLU8UWJ	23	0
+PMRLY0PHM_1	0	Other	Sarcoma other	Angiosarcoma	Angiosarcoma	PMRLY0PHM	1	0
+PJ0TK6NJU_1	84	NBL	Neuroblastoma	NBL	Neuroblastoma	PJ0TK6NJU	107	0
+PCEQ9RPNM_1	144	Other	Sarcoma other	GIST	Gastrointestinal stromal tumour	PCEQ9RPNM	13	0
+PMEEZY20K_1	72	NBL	Neuroblastoma	NBL	Neuroblastoma	PMEEZY20K	36	0
+PJ55YT9AH_1	180	Osteo	Bone tumours	OST	Osteosarcoma	PJ55YT9AH	109	0
+PGDPRG3VH_1	204	Other	CNS embryonal tumour	CNS embryonal	CNS neuroblastoma, FOXR2-activated	PGDPRG3VH	39	0
+P25897YQZ_1	108	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	P25897YQZ	3	0
+PZTHZN3QM_1	204	STS	Sarcoma other	Sarcoma other	CIC-rearranged sarcoma, non-CNS	PZTHZN3QM	25	0
+P2PDA9DQG_1	168	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	P2PDA9DQG	7	0
+PN6GTH70F_1	120	LGG	Glioneuronal and neuronal tumour	LGG	Ganglioglioma	PN6GTH70F	1	0
+P8N4U2PNJ_1	204	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P8N4U2PNJ	249	0
+PJ8YDQRXZ_1	144	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PJ8YDQRXZ	3	0
+P6E16HXDX_1	60	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	P6E16HXDX	9	0
+PJQC89XL5_1	204	AML	Leukaemia	AML	Acute myeloid leukaemia	PJQC89XL5	76	0
+P37CPCDZU_1	60	NBL	Neuroblastoma	NBL	Neuroblastoma	P37CPCDZU	58	0
+PKRCT9E0U_1	0	Rhabdoid	Sarcoma other	Rhabdoid tumour	Malignant rhabdoid tumour, non-renal/hepatic	PKRCT9E0U	3	0
+P9QMK3GVX_1	180	Osteo	Bone tumours	OST	Osteosarcoma	P9QMK3GVX	40	0
+PJ84UHK4Y_1	156	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PJ84UHK4Y	16	0
+PC61VKVGY_1	180	Osteo	Bone tumours	OST	Osteosarcoma	PC61VKVGY	20	0
+P36HZ9C0X_1	180	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	P36HZ9C0X	27	0
+PXQGX3H3R_1	168	ALL	Lymphoma	TALL/lymphoma	T-lymphoblastic lymphoma	PXQGX3H3R	9	0
+PXEKMADXP_1	84	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PXEKMADXP	12	0
+PE6L8QLMU_1	12	Other	CNS other	Melanocytic tumour	Malignant melanoma, primary CNS	PE6L8QLMU	14	0
+PWTEH6UXM_1	120	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PWTEH6UXM	10752	0
+PFWNL4V3T_1	120	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PFWNL4V3T	27	0
+PJDVEAU2X_1	144	EPN	Ependymoma	EPN-ZFTA	Supratentorial ependymoma, ZFTA fusion-positive, WHO Grade unknown	PJDVEAU2X	0	0
+PD74PW7L2_1	12	Other	Solid other	Solid other	Malignant melanotic neuroectodermal tumour of infancy	PD74PW7L2	0	0
+PVRRJW0WX_1	156	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PVRRJW0WX	8	0
+PJQWNQPMQ_1	168	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PJQWNQPMQ	29	0
+PP7XUPTZD_1	12	AML	Leukaemia	AML	Therapy-related acute myeloid leukaemia	PP7XUPTZD	47	0
+PP7XUPTZD_2	0	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PP7XUPTZD	4	0
+PD19UU4KX_1	72	Other	Sarcoma other	Sarcoma other	Gastrointestinal neuroectodermal tumour	PD19UU4KX	3	0
+PH212JLHU_1	84	WT	Kidney tumour	WT	Wilms tumour	PH212JLHU	2	0
+PRE70U2H8_1	36	NBL	Neuroblastoma	NBL	Neuroblastoma	PRE70U2H8	38	0
+PUTC5ACJ0_1	180	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, no H3 K27M mutation	PUTC5ACJ0	26	0
+PC6U8552K_1	24	Other	CNS embryonal tumour	ETMR	Embryonal tumour with multilayered rosettes, C19MC-altered	PC6U8552K	31	0
+PDRP7YC47_1	84	NBL	Neuroblastoma	NBL	Neuroblastoma	PDRP7YC47	147	0
+PPCRJTGRV_1	156	HGG	Paediatric-type diffuse HGG	HGG	Diffuse hemispheric glioma, H3 G34-mutant	PPCRJTGRV	19	0
+P2D1V456Z_1	48	WT	Kidney tumour	WT	Wilms tumour	P2D1V456Z	4	0
+PJWWK66D7_1	108	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PJWWK66D7	24	0
+PND9Z78ZR_1	0	STS	Sarcoma other	Fibroblastic and myofibroblastic tumour	Infantile fibrosarcoma	PND9Z78ZR	1	0
+PVJPLU0T9_1	192	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	PVJPLU0T9	32	0
+P47T5W4P0_1	204	Other	Liver tumour	Hepatoblastoma/HCC	Hepatocellular carcinoma	P47T5W4P0	15	0
+P8VQDGRTX_1	96	HGG	Paediatric-type diffuse HGG	HGG	Diffuse hemispheric glioma, H3 G34-mutant	P8VQDGRTX	29	0
+P679CUL18_1	192	Osteo	Bone tumours	OST	Osteosarcoma	P679CUL18	48	0
+P48QDYH23_1	60	NBL	Neuroblastoma	NBL	Neuroblastoma	P48QDYH23	172	0
+P3R1AN0V0_1	132	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P3R1AN0V0	12	0
+P711PGLTF_1	120	Other	CNS embryonal tumour	CNS embryonal	CNS embryonal tumour, NOS	P711PGLTF	837	0
+PW6PRXTU5_1	204	STS	Sarcoma other	Sarcoma other	CIC-rearranged sarcoma, non-CNS	PW6PRXTU5	16	0
+PW6PRXTU5_2	204	STS	Sarcoma other	Sarcoma other	CIC-rearranged sarcoma, non-CNS	PW6PRXTU5	13	0
+P0Q17L8FA_1	252	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	P0Q17L8FA	50	0
+PUDEG4YFF_1	228	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PUDEG4YFF	40	0
+PHD6G91DG_1	132	Other	Adrenal cortical tumour	Adrenal cortical tumour	Adrenocortical carcinoma	PHD6G91DG	18	0
+P8DGRPX3R_1	60	STS	Solid other	Fibroblastic and myofibroblastic tumour	Spindle cell neoplasm	P8DGRPX3R	1	0
+PN8N30VLX_1	12	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PN8N30VLX	112	0
+P00EY80W3_1	360	NBL	Neuroblastoma	NBL	Neuroblastoma	P00EY80W3	9	0
+PMP7N9E0R_1	168	STS	Sarcoma other	Sarcoma other	CIC-rearranged sarcoma, non-CNS	PMP7N9E0R	6	0
+P16QXMXKR_1	12	STS	Solid other	Fibroblastic and myofibroblastic tumour	Spindle cell neoplasm	P16QXMXKR	5	0
+P0099H0W7_1	168	Osteo	Bone tumours	Bone tumours other	Osteoblastoma	P0099H0W7	2	0
+P00DT20DM_1	12	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Embryonal rhabdomyosarcoma	P00DT20DM	1	0
+PL16C6JP3_1	12	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PL16C6JP3	3	0
+PR0KL0JK6_1	180	NHL	Lymphoma	Burkitt lymphoma	Burkitt lymphoma	PR0KL0JK6	28	0
+PG72DAX78_1	12	Rhabdoid	Sarcoma other	Rhabdoid tumour	Malignant rhabdoid tumour, non-renal/hepatic	PG72DAX78	7	0
+PY6EFZZ9V_1	36	Rhabdoid	Kidney tumour	Rhabdoid tumour	Malignant rhabdoid tumour, renal	PY6EFZZ9V	2	0
+PZ1C00NVG_1	0	LGG	Paediatric-type diffuse LGG	LGG	Diffuse low grade glioma, MAPK pathway altered	PZ1C00NVG	3	0
+PDR3MJLR8_1	24	EPN	Ependymoma	EPN-PFA	Posterior fossa A ependymoma, group PFA, WHO G3	PDR3MJLR8	4	0
+PARUWULMW_1	36	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PARUWULMW	3	0
+P9JJZ20DG_1	216	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	P9JJZ20DG	13	0
+PK1D576K0_1	0	EPN	Ependymoma	EPN-PFA	Posterior fossa A ependymoma, group PFA, WHO G3	PK1D576K0	2	0
+P006Z407R_1	60	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P006Z407R	10	0
+PUR74E5KD_1	48	Other	CNS embryonal tumour	CNS embryonal	CNS embryonal tumour with BCOR internal tandem duplication	PUR74E5KD	9	0
+P0084A07H_1	108	STS	Sarcoma other	Sarcoma other	Alveolar soft part sarcoma	P0084A07H	0	0
+PCD30EW1L_1	204	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PCD30EW1L	19	0
+P3DD9UPEL_1	72	EPN	Ependymoma	EPN-PFA	Posterior fossa A ependymoma, group PFA, WHO G3	P3DD9UPEL	38	0
+P65JL69KR_1	120	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P65JL69KR	2	0
+PDQDE9076_1	180	NHL	Lymphoma	Burkitt lymphoma	Burkitt lymphoma	PDQDE9076	35	0
+PRRJL1KY2_1	120	Other	Liver tumour	Hepatoblastoma/HCC	Hepatocellular malignant neoplasm, NOS	PRRJL1KY2	102	0
+P10ZD2JFR_1	108	Rhabdoid	Sarcoma other	Rhabdoid tumour	Rhabdoid tumour of small cell type	P10ZD2JFR	23	0
+PCP9ZTN4D_1	48	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	PCP9ZTN4D	6	0
+PMHP2LLT7_1	204	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PMHP2LLT7	64	0
+PL5ALPLYP_1	168	Other	Carcinoma	Carcinoma	Non small cell lung carcinoma	PL5ALPLYP	1	0
+PWRG94FPN_1	168	Other	Lymphoma	Mature T lymphoma	Subcutaneous panniculitis-like T-cell lymphoma	PWRG94FPN	1	0
+PKWYWUPL7_1	252	WT	Kidney tumour	WT	Wilms tumour	PKWYWUPL7	46	0
+P41YR76W2_1	36	HGG	Glioneuronal and neuronal tumour	HGG	Neuro-epithelial tumour with PATZ1 fusion	P41YR76W2	7	0
+PGWQXRU34_1	132	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PGWQXRU34	20	0
+P6P309FEQ_1	48	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P6P309FEQ	10	0
+PF26WF01D_1	120	MB	CNS embryonal tumour	MB-non WNT/non-SHH	Medulloblastoma, non-WNT/non-SHH	PF26WF01D	47	0
+PUQZ0NR4C_1	48	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PUQZ0NR4C	17	0
+PZ6YX66DL_1	132	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PZ6YX66DL	21	0
+PL8TQUFW3_1	120	MB	CNS embryonal tumour	MB-non WNT/non-SHH	Medulloblastoma, non-WNT/non-SHH	PL8TQUFW3	45	0
+P090PNENG_1	324	HGG	Adult-type diffuse glioma	HGG	Glioblastoma, IDH wild-type	P090PNENG	35	0
+PLE01N097_1	204	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PLE01N097	8	0
+PTTA0DVA8_1	48	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PTTA0DVA8	12	0
+PDCX5XU12_1	84	ALL	Lymphoma	TALL/lymphoma	T-lymphoblastic lymphoma	PDCX5XU12	10	0
+P0156006W_1	192	STS	Peripheral nerve sheath tumour	MPNST	Malignant peripheral nerve sheath tumour	P0156006W	29	0
+P28W1R334_1	48	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	P28W1R334	19	0
+P4EMZ3NQL_1	48	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	P4EMZ3NQL	7	0
+PN6WKNYX4_1	168	Other	Lymphoma	Mature T lymphoma	Hepatosplenic T-cell lymphoma	PN6WKNYX4	18	0
+PVQ8XCVV2_1	180	HL	Lymphoma	Hodgkin lymphoma	Hodgkin lymphoma	PVQ8XCVV2	1	0
+PT66HKURJ_1	24	Other	CNS embryonal tumour	ETMR	Embryonal tumour with multilayered rosettes, C19MC-altered	PT66HKURJ	6	0
+PEDK3ACXC_1	144	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PEDK3ACXC	14	0
+P5XUTAPTE_1	144	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	P5XUTAPTE	21	0
+PDNF2Z1UD_1	120	LGG	Glioneuronal and neuronal tumour	LGG	Ganglioglioma	PDNF2Z1UD	5	0
+PDDC4HFDX_1	36	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PDDC4HFDX	2	0
+PDDC4HFDX_2	36	HGG	Paediatric-type diffuse HGG	HGG	Infant-type hemispheric glioma fusion-positive	PDDC4HFDX	15	0
+P00AFP05P_1	144	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P00AFP05P	19	0
+PR1WERJ8P_1	120	NBL	Neuroblastoma	NBL	Neuroblastoma	PR1WERJ8P	117	0
+PQXP3VV9C_1	168	HGG	Paediatric-type diffuse HGG	HGG	Diffuse hemispheric glioma, H3 G34-mutant	PQXP3VV9C	30	0
+P05P72NPV_1	24	Other	Solid other	Solid other	Malignant melanotic neuroectodermal tumour of infancy	P05P72NPV	1	0
+PMJRY7LZZ_1	48	WT	Kidney tumour	WT	Wilms tumour	PMJRY7LZZ	45	0
+P50H8M04J_1	24	HGG	Pineal tumour	Pineoblastoma	Pineoblastoma, RB1-altered	P50H8M04J	5	0
+PW5LXMYU9_1	24	EPN	Ependymoma	EPN-ZFTA	Supratentorial ependymoma, ZFTA fusion-positive, WHO Grade unknown	PW5LXMYU9	26	0
+PP227RNGD_1	48	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PP227RNGD	3	0
+PXTFN7HP0_1	180	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PXTFN7HP0	60	0
+P86K40GGF_1	204	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	P86K40GGF	8	0
+PK5QDYZLG_1	12	MB	CNS embryonal tumour	MB-SHH	Medulloblastoma, SHH-activated and TP53-mutant	PK5QDYZLG	125	0
+PQT7NDN54_1	72	LGG	Glioneuronal and neuronal tumour	LGG	Glioneuronal tumour, NOS, low grade	PQT7NDN54	3	0
+PH6VEYU3V_1	12	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	PH6VEYU3V	1	0
+P0CLWGYKQ_1	132	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	P0CLWGYKQ	152	0
+P8RZJQXDN_1	12	STS	Sarcoma other	Fibroblastic and myofibroblastic tumour	Infantile fibrosarcoma	P8RZJQXDN	4	0
+PARHF4LGF_1	252	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PARHF4LGF	44	0
+PFRF47GMY_1	0	Other	Choroid plexus tumour	Choroid plexus tumour	Choroid plexus carcinoma, TP53-wildtype	PFRF47GMY	1	0
+PHJGMR41X_1	24	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PHJGMR41X	2	0
+PMW0NUZ0P_1	120	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Embryonal rhabdomyosarcoma	PMW0NUZ0P	18	0
+PYD8TWG58_1	240	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PYD8TWG58	48	0
+PHWU7FH9F_1	0	Rhabdoid	Liver tumour	Rhabdoid tumour	Malignant rhabdoid tumour, liver	PHWU7FH9F	2	0
+PVHG3F085_1	168	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PVHG3F085	8	0
+PEJV8N6MX_1	24	AML	Leukaemia	AML	Acute myeloid leukaemia	PEJV8N6MX	8	0
+PXNHEF7VW_1	156	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PXNHEF7VW	25	0
+P260NU8DD_1	72	MB	CNS embryonal tumour	MB-non WNT/non-SHH	Medulloblastoma, non-WNT/non-SHH	P260NU8DD	9	0
+PYVW0LKJJ_1	132	LGG	Circumscribed astrocytic glioma	LGG	Pilocytic astrocytoma	PYVW0LKJJ	1	0
+PDXX31ZRQ_1	180	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PDXX31ZRQ	9	0
+P4QNQ0FP2_1	228	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	P4QNQ0FP2	33	0
+P882GJZ93_1	24	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P882GJZ93	10	0
+P4RAMDF0M_1	144	Other	Leukaemia	Acute leukaemia	Acute undifferentiated leukaemia	P4RAMDF0M	24	0
+P9XJGEYHY_1	0	Rhabdoid	Sarcoma other	Rhabdoid tumour	Malignant rhabdoid tumour, non-renal/hepatic	P9XJGEYHY	7	0
+PPT6HGP4K_1	180	EPN	Ependymoma	EPN	Ependymoma, NOS, WHO Grade unknown	PPT6HGP4K	2	0
+PQJEAA0MH_1	36	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, no H3 K27M mutation	PQJEAA0MH	7	0
+PQT1VJVFJ_1	144	AML	Leukaemia	AML	Acute myeloid leukaemia	PQT1VJVFJ	2	0
+PHE2DE7NA_1	24	NBL	Neuroblastoma	NBL	Neuroblastoma	PHE2DE7NA	6	0
+PZ805NDRV_1	144	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PZ805NDRV	17	0
+PTN74JC5Z_1	72	ALL	Leukaemia	PreB ALL/lymphoma	B-lymphoblastic leukaemia	PTN74JC5Z	21	0
+PRT8VD563_1	204	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PRT8VD563	56	0
+P0ECN5VHJ_1	108	Other	Liver tumour	Hepatoblastoma/HCC	Hepatocellular carcinoma	P0ECN5VHJ	54	0
+P0ECN5VHJ_2	96	Other	Liver tumour	Hepatoblastoma/HCC	Hepatocellular carcinoma	P0ECN5VHJ	7	0
+P224K3L1C_1	168	AML	Leukaemia	AML	Acute myeloid leukaemia	P224K3L1C	8	0
+PC0MXE2DZ_1	156	Other	Histiocytosis	Histiocytosis	Malignant histiocytosis (M group)	PC0MXE2DZ	46	0
+P004MR0NL_1	72	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	P004MR0NL	11	0
+PK701XVYR_1	204	Osteo	Bone tumours	OST	Osteosarcoma	PK701XVYR	96	0
+PF0Y6W0VC_1	72	Other	Sarcoma other	Angiosarcoma	Angiosarcoma	PF0Y6W0VC	10	0
+PHDT2KLWW_1	36	STS	Rhabdomyosarcoma	RMS FOXO1 fusion negative	Embryonal rhabdomyosarcoma	PHDT2KLWW	15	0
+P7HRE04TW_1	12	NBL	Neuroblastoma	NBL	Neuroblastoma	P7HRE04TW	56	0
+PU5W1XCD5_1	192	STS	Sarcoma other	Sarcoma other	Epithelioid sarcoma	PU5W1XCD5	8	0
+PLQK6ZKQ4_1	120	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PLQK6ZKQ4	32	0
+PMQAHK86E_1	144	HGG	Paediatric-type diffuse HGG	HGG	Diffuse high grade glioma, H3-wildtype and IDH-wildtype	PMQAHK86E	24	0
+PKDXQ0H43_1	276	HGG	Adult-type diffuse glioma	HGG	Glioblastoma, IDH wild-type	PKDXQ0H43	80	0
+P4E4P3Z9C_1	48	AML	Leukaemia	AML	Acute myeloid leukaemia	P4E4P3Z9C	3	0
+PZDHY03KD_1	0	Rhabdoid	Sarcoma other	Rhabdoid tumour	Malignant rhabdoid tumour, non-renal/hepatic	PZDHY03KD	3	0
+PP5TQF5E7_1	240	Osteo	Bone tumours	OST	Osteosarcoma	PP5TQF5E7	4	0
+P2QFQ52UK_1	0	AML	Leukaemia	AML	Acute myeloid leukaemia	P2QFQ52UK	7	0
+P053M6XT5_1	132	NBL	Neuroblastoma	NBL	Neuroblastoma	P053M6XT5	54	0
+PYTGU508V_1	72	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PYTGU508V	13	0
+PY1XKZL5G_1	180	Other	Lymphoma	Mature T lymphoma	Anaplastic large cell lymphoma, ALK fusion-positive	PY1XKZL5G	16	0
+PFQLCYNRH_1	180	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	PFQLCYNRH	8	0
+P45DY8ZH8_1	204	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	P45DY8ZH8	20	0
+P003GK035_1	264	STS	Sarcoma other	Sarcoma other	Alveolar soft part sarcoma	P003GK035	5	0
+PZQR0WH1Y_1	204	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PZQR0WH1Y	31	0
+P7CZHHQJ2_1	192	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	P7CZHHQJ2	11	0
+PTEVY5JWR_1	180	Osteo	Bone tumours	OST	Osteosarcoma	PTEVY5JWR	34	0
+P40VWL6JQ_1	144	Other	Germ cell tumour	Germ cell tumour	Yolk sac tumour, non-CNS	P40VWL6JQ	1	0
+PYXRFN41D_1	24	MB	CNS embryonal tumour	MB-non WNT/non-SHH	Medulloblastoma, non-WNT/non-SHH	PYXRFN41D	9	0
+PVTDAC1F4_1	192	HL	Lymphoma	Hodgkin lymphoma	Hodgkin lymphoma	PVTDAC1F4	10	0
+P3VTP0N7D_1	216	STS	Rhabdomyosarcoma	RMS FOXO1 fusion positive	Alveolar rhabdomyosarcoma	P3VTP0N7D	47	0
+PRQJ22LZK_1	60	HGG	Paediatric-type diffuse HGG	DMG	Diffuse midline glioma, H3 K27-altered, H3 K27M mutation	PRQJ22LZK	9	0
+PR1QT0JAD_1	204	EPN	Ependymoma	EPN-ZFTA	Supratentorial ependymoma, ZFTA fusion-positive, WHO Grade unknown	PR1QT0JAD	7	0
+PYEG4RDN2_1	120	NBL	Neuroblastoma	NBL	Neuroblastoma	PYEG4RDN2	1	0
+P2E85MX74_1	60	ALL	Leukaemia	TALL/lymphoma	T-lymphoblastic leukaemia	P2E85MX74	24	0
+PUHUQDN87_1	96	EWS	Ewing sarcoma	EWS	Ewing sarcoma, bone or soft tissue	PUHUQDN87	14	0
+PUE3J9404_1	0	Rhabdoid	Kidney tumour	Rhabdoid tumour	Malignant rhabdoid tumour, renal	PUE3J9404	5	0
+PNT5CGJ5J_1	0	Rhabdoid	CNS embryonal tumour	Rhabdoid tumour	Atypical teratoid rhabdoid tumour	PNT5CGJ5J	7	0
+PY7U0D92M_1	137	NBL	solid	nbl	nbl	PY7U0D92M	43	0
+P8XY7W0WX_1	185	EWS	solid	SARCOMA_EWS	SARCOMA_EWS_FLI	P8XY7W0WX	70	0
+PPTK31CKN_1	150	EWS	solid	sarcoma_ews	sarcoma_ews_fli	PPTK31CKN	82	0
+PHTDH797L_1	184	HGG	brain	hgg	hgg_x-others	PHTDH797L	73	0
+PHUTC553C_1	209	Rhabdoid	solid	sarcoma_rms	sarcoma_rms_alv	PHUTC553C	113	0
+PW709HXL0_1	159	ALL	ho	ho_all	all_b	PW709HXL0	35	97
+PAT6VHHE5_1	172	Rhabdoid	solid	SARCOMA_RMS	SARCOMA_RMS_EMB	PAT6VHHE5	91	0
+P8AVP1XH2_1	142	Other	solid	X-OTHERS	MALIGNANT_LIVER_TUMOR	P8AVP1XH2	88	0
+PW1DVHXDD_1	158	HGG	brain	hgg	hgg_x-others	PW1DVHXDD	426	0
+P00C6W0Y0_1	150	HGG	brain	hgg	hgg_k27m	P00C6W0Y0	18	0
+PH8E5W302_1	211	WT	solid	WILMS	WILMS	PH8E5W302	32	0
+PQ7J4WF1K_1	67	Other	solid	x-others	ppb	PQ7J4WF1K	44	0
+PT8RDXJG9_1	238	HGG	brain	hgg	hgg_k27m	PT8RDXJG9	66	0
+PYDQ0JKZ0_1	58	NBL	solid	nbl	nbl	PYDQ0JKZ0	114	0
+PFJXNZFTT_1	167	STS	solid	sarcoma_x-others	sarcoma_asps	PFJXNZFTT	39	0
+PH2TQ4J6X_1	11	NBL	solid	nbl	nbl	PH2TQ4J6X	14	0
+PWY3VK590_1	151	Osteo	solid	SARCOMA_OSTEO	SARCOMA_OSTEO	PWY3VK590	62	0
+P0N5XHYRX_1	NA	NHL	ho	ho_nhl	nhl_burkitt	P0N5XHYRX	84	60
+PG7CHFQDE_1	95	HGG	brain	HGG	hgg_k27m	PG7CHFQDE	36	30
+P681YUNWA_1	222	Other	solid	x-others	nasopharynx_ca	P681YUNWA	70	0
+PU93M1P29_1	177	NHL	ho	ho_nhl	nhl_x-others	PU93M1P29	54	18
+P00HUA0GT_1	87	NHL	ho	ho_nhl	nhl_burkitt	P00HUA0GT	63	75
+P5WCT5857_1	189	STS	solid	SARCOMA_X-OTHERS	SARCOMA_BCOR	P5WCT5857	50	0
+PTRXZK5UR_1	165	Rhabdoid	solid	sarcoma_rms	sarcoma_rms_alv	PTRXZK5UR	106	0
+PWTQNY4DL_1	119	Other	solid	x-others	malignant_liver_tumor	PWTQNY4DL	50	0
+PD3H4XFG0_1	100	WT	solid	wilms	wilms	PD3H4XFG0	17	0
+P2ZPCRYKK_1	34	Rhabdoid	solid	sarcoma_rms	sarcoma_rms_alv	P2ZPCRYKK	230	0
+P0KRKM80V_1	48	Other	OTHER	HEPATOBLASTOMA	HEPATOBLASTOMA	P0KRKM80V	NA	NA
+P12CU5D2C_1	24	EPN	BRAIN	EPN	EPN_PFA	P12CU5D2C	NA	NA
+P4K1CKKPZ_1	96	STS	SARCOMA	SARCOMA_RMS	SARCOMA_RMS_MYOD	P4K1CKKPZ	NA	NA
+P4K606AGC_1	120	STS	SARCOMA	SARCOMA_RMS	SARCOMA_RMS_MYOD	P4K606AGC	NA	NA
+PDHTUKX47_1	96	ALL-HR	LEUKEMIA/LYMPHOMA	ALL	ALL_B	PDHTUKX47	NA	NA
+PDKYDRM4Y_1	216	STS	SARCOMA	SARCOMA_RMS	SARCOMA_RMS_ALV	PDKYDRM4Y	NA	NA
+PH2KRL2JM_1	192	Other	LEUKEMIA/LYMPHOMA	ALL	ALL_B	PH2KRL2JM	NA	NA
+PRJA391P8_1	24	Rhabdoid	OTHER	MRT	MRT	PRJA391P8	NA	NA
+PUHZMV07U_1	168	HGG	BRAIN	HGG	HGG_X-OTHERS	PUHZMV07U	NA	NA
+PVK0666T8_1	216	Other	OTHER	GCT	GCT_NON-CNS	PVK0666T8	NA	NA
+
+===== ./meta_seg.txt =====
+cancer_study_identifier: PedCanPortal
+genetic_alteration_type: COPY_NUMBER_ALTERATION
+datatype: SEG
+data_filename: data_seg.seg
+description: CNA seg
+reference_genome_id: hg38
+
+===== ./data_seg.seg =====
+ID	chrom	loc.start	loc.end	num.mark	seg.mean
+PUE3J9404_1	1	1	123605522	108469	0.00209039
+PUE3J9404_1	1	123605523	248956422	92590	0.00712372
+
+===== ./structure.txt =====
+
+===== ./meta_case_list_custom.txt =====
+cancer_study_identifier: PedCanPortal
+datatype: CASE_LIST
+data_filename: cases_sequenced.txt
+
+
+===== ./data_mutation.maf =====
+#version 2.4
+Hugo_Symbol	Entrez_Gene_Id	Center	NCBI_Build	Chromosome	Start_Position	End_Position	Strand	Variant_Classification	Variant_Type	Reference_Allele	Tumor_Seq_Allele1	Tumor_Seq_Allele2	dbSNP_RS	dbSNP_Val_Status	Tumor_Sample_Barcode	Matched_Norm_Sample_Barcode	Match_Norm_Seq_Allele1	Match_Norm_Seq_Allele2	Tumor_Validation_Allele1	Tumor_Validation_Allele2	Match_Norm_Validation_Allele1	Match_Norm_Validation_Allele2	Verification_Status	Validation_Status	Mutation_Status	Sequencing_Phase	Sequence_Source	Validation_Method	Score	BAM_File	Sequencer	Tumor_Sample_UUID	Matched_Norm_Sample_UUID	HGVSc	HGVSp	HGVSp_Short	Transcript_ID	Exon_Number	t_depth	t_ref_count	t_alt_count	n_depth	n_ref_count	n_alt_count	all_effects	Allele	Gene	Feature	Feature_type	Consequence	cDNA_position	CDS_position	Protein_position	Amino_acids	Codons	Existing_variation	ALLELE_NUM	DISTANCE	STRAND_VEP	SYMBOL	SYMBOL_SOURCE	HGNC_ID	BIOTYPE	CANONICAL	CCDS	ENSP	SWISSPROT	TREMBL	UNIPARC	RefSeq	SIFT	PolyPhen	EXON	INTRON	DOMAINS	AF	AFR_AF	AMR_AF	ASN_AF	EAS_AF	EUR_AF	SAS_AF	AA_AF	EA_AF	CLIN_SIG	SOMATIC	PUBMED	MOTIF_NAME	MOTIF_POS	HIGH_INF_POS	MOTIF_SCORE_CHANGE	IMPACT	PICK	VARIANT_CLASS	TSL	HGVS_OFFSET	PHENO	MINIMISED	ExAC_AF	ExAC_AF_AFR	ExAC_AF_AMR	ExAC_AF_EAS	ExAC_AF_FIN	ExAC_AF_NFE	ExAC_AF_OTH	ExAC_AF_SAS	GENE_PHENO	FILTER	flanking_bps	vcf_id	vcf_qual	ExAC_AF_Adj	ExAC_AC_AN_Adj	ExAC_AC_AN	ExAC_AC_AN_AFR	ExAC_AC_AN_AMR	ExAC_AC_AN_EAS	ExAC_AC_AN_FIN	ExAC_AC_AN_NFE	ExAC_AC_AN_OTH	ExAC_AC_AN_SAS	ExAC_FILTER	gnomAD_AF	gnomAD_AFR_AF	gnomAD_AMR_AF	gnomAD_ASJ_AF	gnomAD_EAS_AF	gnomAD_FIN_AF	gnomAD_NFE_AF	gnomAD_OTH_AF	gnomAD_SAS_AF	vcf_pos
+TNFRSF18	8784	.	GRCh38	chr1	1203944	1203944	+	Missense_Mutation	SNP	G	G	A	rs765913565		P0RDY5VK5_1	P0RDY5VK5_N	G	G																c.626C>T	p.Pro209Leu	p.P209L	ENST00000379268	5/5	150	89	60	46	45	0	TNFRSF18,missense_variant,p.Pro209Leu,ENST00000379268,NM_004195.3;TNFRSF18,missense_variant,p.Arg139Cys,ENST00000328596,NM_148901.2;TNFRSF18,missense_variant,p.Pro137Leu,ENST00000486728,;TNFRSF18,missense_variant,p.Pro202Leu,ENST00000379265,NM_148902.2;	A	ENSG00000186891	ENST00000379268	Transcript	missense_variant	647/1083	626/726	209/241	P/L	cCg/cTg	rs765913565	1		-1	TNFRSF18	HGNC	HGNC:11914	protein_coding	YES	CCDS10.1	ENSP00000368570	Q9Y5U5.173		UPI0000035975	NM_004195.3	tolerated(0.05)	benign(0.015)	5/5		PANTHER:PTHR47388																	MODERATE	1	SNV	1													PASS	CGG	.	200												2.134e-05					5.552e-05	3.836e-05			1203944
