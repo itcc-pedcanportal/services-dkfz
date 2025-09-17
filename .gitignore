@@ -176,3 +176,5 @@ cython_debug/
 .idea
 /pyproject.toml
 /uv.lock
+
+structure.txt
